@@ -4,6 +4,6 @@ require 'fluent/icons/engine' if defined?(::Rails)
 module Fluent
   module Icons
     class Error < StandardError; end
-    class Error < IconNotFoundError; end
+    class IconNotFoundError < StandardError; end
   end
 end

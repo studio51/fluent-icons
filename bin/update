@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'fluent/icons'
+
+require 'git'
+require 'fileutils'
+require 'progress_bar'
+
+if Dir.exists?('fluentui-system-icons')
+  puts "Theres's already a copy of 'microsoft/fluentui-system-icons'. You should probably remove that first! Skipping.."
+else
+  puts "Cloning the 'microsoft/fluentui-system-icons' repository. This might take a while.."
+  Git.clone('https://github.com/microsoft/fluentui-system-icons.git', 'fluentui-system-icons')
+end
+
+puts 'Transferring the SVG Icons'
+icons = Dir['fluentui-system-icons/assets/*/SVG/*']
+progress_bar = ProgressBar.new(icons.size)
+
+icons.each do |icon|
+  FileUtils.copy(icon, 'lib/app/assets/fonts/fluent')
+  progress_bar.increment!
+end
+
+puts 'Generating a new Preview file'
+# TODO
+
+puts 'Cleaning up'
+FileUtils.rm_rf('fluentui-system-icons') if Dir.exists?('fluentui-system-icons')
