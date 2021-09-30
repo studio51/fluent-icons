@@ -24,7 +24,13 @@ icons.each do |icon|
 end
 
 puts 'Generating a new Preview file'
-# TODO
+@icons   = Dir['lib/app/assets/fonts/fluent/*.svg']
+template = File.read('lib/public/fluent-ui-icons.template.html.erb')
+result   = ERB.new(template).result(binding)
+
+File.open('lib/public/fluent-ui-icons.html', 'w+') do |f|
+  f.write(result)
+end
 
 puts 'Cleaning up'
 FileUtils.rm_rf('fluentui-system-icons') if Dir.exists?('fluentui-system-icons')

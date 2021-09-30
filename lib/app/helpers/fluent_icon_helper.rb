@@ -1,8 +1,8 @@
 module Fluent
   module Icons
-    module FluentIconsHelper
+    module FluentIconHelper
       def fluent(name, html_options = {})
-        weight      = html_options[:weight] || 20
+        weight = html_options[:weight] || 20
         variation = html_options[:variation] || :regular
 
         asset = ['ic_fluent', name, weight, variation].join('_')
