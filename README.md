@@ -1,15 +1,23 @@
 # Fluent::Icons
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/fluent/icons`. To experiment with that code, run `bin/console` for an interactive prompt.
+This gem allows you to use Microsoft's Fluent Icons package in a Rails app through the `fluent()` helper.
+This has been extracted from https://games.directory without any other consideration, as such, if it doesn't work for you, you can either open an Issue or Pull Request.
 
-TODO: Delete this and the text above, and describe your gem
+https://github.com/microsoft/fluentui-system-icons
+
+I'm happy to merge anything that'll make this work with any other Rails app.
+
+## Considerations
+
+- Currently, the gem has to be updated manually each time the fluent repository gets updated. Expect weekly updates.
+- The gem stores a copy of all SVG images available in the FluentUI Icon library. It's biiiiig!
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'fluent-icons'
+    gem 'fluent-icons'
 ```
 
 And then execute:
@@ -22,7 +30,32 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+By default, the helper will use `weight: 20` of the SVG icon. However, not all of them have a weight of 20.
+If the SVG image is not found, you should try a different weight like so: `fluent('add', weight: 24)`
+
+If you use TailwindCSS, you can change the size and color of the icon with `fluent('add', class: 'w-4 h-4 fill-current text-green-500')`
+
+The gem doesn't do this for you, but you should add a new CSS rule:
+
+TailwindCSS:
+
+```
+  .fluent {
+    path { @apply fill-current; }
+  }
+```
+
+Or, plain CSS:
+
+```
+  .fluent {
+    path { fill-current; }
+  }
+```
+
+With this, you don't have to apply the `fill-current` class every time.
+
+The 
 
 ## Development
 
@@ -33,7 +66,6 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/fluent-icons. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/fluent-icons/blob/master/CODE_OF_CONDUCT.md).
-
 
 ## License
 
