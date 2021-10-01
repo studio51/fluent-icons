@@ -39,7 +39,7 @@
 
               <% pack[:icons][variation].sort_by { |icon| icon[:weight] }.each do |icon| %>
                 <div class="col-span-2 bg-gray-50 bg-opacity-20 p-2 rounded-md">
-                  <img src='.' data-src='<%= icon[:src] %>' alt='<%= icon[:src].split('/').last %>' class='lazy w-8 h-8' />
+                  <img src='.' data-src='<%= @docs ? "#{ icon[:src].gsub('../../', 'https://raw.githubusercontent.com/studio51/fluent-ui-icons/main/') }" : icon[:src] %>' alt='<%= icon[:src].split('/').last %>' class='lazy w-8 h-8' />
 
                   Name: <p class='text-xs'><%= icon[:name] %></p>
                   Weight: <p class='text-xs'><%= icon[:weight] %></p>
