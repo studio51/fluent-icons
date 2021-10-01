@@ -54,5 +54,8 @@ File.open('lib/public/fluent-ui-icons.html', 'w+') do |f|
   f.write(result)
 end
 
+puts 'Copying the generated files to the docs folder'
+FileUtils.copy('lib/public/fluent-ui-icons.html', 'docs/index.html')
+
 puts 'Cleaning up'
 FileUtils.rm_rf('fluentui-system-icons') if Dir.exists?('fluentui-system-icons')
