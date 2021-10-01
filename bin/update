@@ -26,6 +26,7 @@ end
 puts 'Organising the Icons'
 
 @icons = {}
+@docs = false
 
 Dir['lib/app/assets/fonts/fluent/*.svg'].map { |icon| icon.split('/').last.split('.').first }.group_by { |icon| icon.split('_')[2..][-0..-3].join('_') }.each do |group, icons|
   @icons[group] = {

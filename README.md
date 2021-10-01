@@ -43,6 +43,15 @@ To avoid having to add the `fill-current` class each time, you can add these CSS
 .fluent path { fill: currentColor; } /* Plain CSS */
 ```
 
+## ToDo
+
+- [ ] Add a ViewComponent option
+- [ ] Add CSS fonts
+- [ ] Get rid of Nokogiri
+- [ ] Find a better way to store the icons, or better yet, use Github Actions to generate them automatically on new releases
+- [ ] Add a way to search them on Github Pages
+- [ ] Render raw SVG, instead of images, when previewing so we can dynamically set color and size, if needed
+
 ## Update
 
 To update the icons, run `bin/update`.
