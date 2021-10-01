@@ -19,6 +19,8 @@ Gem::Specification.new do |spec|
   spec.metadata['changelog_uri'] = 'https://github.com/studio51/fluent-ui-icons/blob/main/CHANGELOG.md'
 
   spec.add_dependency 'nokogiri'
+
+  spec.add_development_dependency 'rails'
   spec.add_development_dependency 'git'
   spec.add_development_dependency 'progress_bar'
 end
