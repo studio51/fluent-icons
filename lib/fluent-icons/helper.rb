@@ -12,12 +12,10 @@ module FluentIcons
     cache_key = [symbol, options]
 
     unless (tag = fluent_helper_cache[cache_key])
-      icon = FluentIcons::Fluent.new(symbol, options)
-
-      tag = content_tag(:svg, icon.path.html_safe, icon.options).freeze # rubocop:disable Rails/OutputSafety
-      fluent_helper_cache[cache_key] = tag
+      fluent_helper_cache[cache_key] = FluentIcons::Fluent.new(symbol, options).to_svg
     end
 
     tag
   end
+  alias_method :fluent_icon, :fluent 
 end
