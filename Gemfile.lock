@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fluent-ui-icons (1.0.0)
+    fluent-icons (1.0.0.167)
       actionview
       railties
 
@@ -75,7 +75,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  fluent-ui-icons!
+  fluent-icons!
   git
   progress_bar
   rake (~> 12.0)
