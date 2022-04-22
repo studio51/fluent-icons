@@ -26,18 +26,11 @@ end
 
 puts 'Organising the Icons'
 
-# @icons = {}
+@generate_docs = false
 @docs = false
 @schema = {}
 
 Dir['lib/build/svg/*.svg'].map { |icon| icon.split('/').last.split('.').first }.group_by { |icon| icon.split('_')[2..][-0..-3].join('_') }.each do |group, icons|
-  # @icons[group] = {
-  #   icons: {
-  #     filled:  [],
-  #     regular: [],
-  #   }
-  # }
-
   @schema[group] = {
     name: icons[0].split('_')[0..-3].join('_'),
     weights: [],
@@ -53,12 +46,6 @@ Dir['lib/build/svg/*.svg'].map { |icon| icon.split('/').last.split('.').first }.
       name   = icon.split('_')[2..-3].join('_')
       weight = icon.split('_')[-2]
       src    = ['lib/build/svg', "#{ icon }.svg"].join('/')
-      
-      # @icons[group][:icons][variation.to_sym] << {
-      #   name:   name,
-      #   weight: weight,
-      #   src:    ['..', '..', src].flatten
-      # }
 
       begin
         path = "#{ File.read(src).match(/.*<path([^\/]*)/)[0] } />"
@@ -78,22 +65,24 @@ File.open('lib/build/data.json', 'w+') do |f|
   f.write(@schema.to_json)
 end
 
-# puts 'Generating a new Preview file'
-# template = File.read('lib/public/fluent-ui-icons.template.html.erb')
-# result   = ERB.new(template).result(binding)
+if @generate_docs
+  puts 'Generating a new Preview file'
+  template = File.read('lib/public/fluent-ui-icons.template.html.erb')
+  result   = ERB.new(template).result(binding)
 
-# File.open('lib/public/fluent-ui-icons.html', 'w+') do |f|
-#   f.write(result)
-# end
+  File.open('lib/public/fluent-ui-icons.html', 'w+') do |f|
+    f.write(result)
+  end
 
-# @docs = true
+  @docs = true
 
-# template = File.read('lib/public/fluent-ui-icons.template.html.erb')
-# result   = ERB.new(template).result(binding)
+  template = File.read('lib/public/fluent-ui-icons.template.html.erb')
+  result   = ERB.new(template).result(binding)
 
-# File.open('docs/index.html', 'w+') do |f|
-#   f.write(result)
-# end
+  File.open('docs/index.html', 'w+') do |f|
+    f.write(result)
+  end
+end
 
 puts 'Cleaning up'
 FileUtils.rm_rf('fluentui-system-icons') if Dir.exists?('fluentui-system-icons')
