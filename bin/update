@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
+require 'pry'
 
 require 'bundler/setup'
-require 'fluent/icons'
+require 'fluent-icons'
 
 require 'git'
 require 'fileutils'
@@ -19,50 +20,80 @@ icons = Dir['fluentui-system-icons/assets/*/SVG/*']
 progress_bar = ProgressBar.new(icons.size)
 
 icons.each do |icon|
-  FileUtils.copy(icon, 'lib/app/assets/fonts/fluent')
+  FileUtils.copy(icon, 'lib/build/svg')
   progress_bar.increment!
 end
 
 puts 'Organising the Icons'
 
-@icons = {}
+# @icons = {}
 @docs = false
+@schema = {}
 
-Dir['lib/app/assets/fonts/fluent/*.svg'].map { |icon| icon.split('/').last.split('.').first }.group_by { |icon| icon.split('_')[2..][-0..-3].join('_') }.each do |group, icons|
-  @icons[group] = {
-    icons: {
-      filled:  [],
-      regular: [],
-    }
+Dir['lib/build/svg/*.svg'].map { |icon| icon.split('/').last.split('.').first }.group_by { |icon| icon.split('_')[2..][-0..-3].join('_') }.each do |group, icons|
+  # @icons[group] = {
+  #   icons: {
+  #     filled:  [],
+  #     regular: [],
+  #   }
+  # }
+
+  @schema[group] = {
+    name: icons[0].split('_')[0..-3].join('_'),
+    weights: [],
+    styles: [],
+    icons: { }
   }
 
   icons.group_by { |icon| icon.split('_').last }.each do |variation, icons|
+    @schema[group][:icons][variation] = {}
+    @schema[group][:styles] << variation
+
     icons.each do |icon|
-      @icons[group][:icons][variation.to_sym] << {
-        name: icon.split('_')[2..-3].join('_'),
-        weight: icon.split('_')[-2],
-        src: ['..', '..', 'lib/app/assets/fonts/fluent', "#{ icon }.svg"].join('/')
-      }
+      name   = icon.split('_')[2..-3].join('_')
+      weight = icon.split('_')[-2]
+      src    = ['lib/build/svg', "#{ icon }.svg"].join('/')
+      
+      # @icons[group][:icons][variation.to_sym] << {
+      #   name:   name,
+      #   weight: weight,
+      #   src:    ['..', '..', src].flatten
+      # }
+
+      begin
+        path = "#{ File.read(src).match(/.*<path([^\/]*)/)[0] } />"
+      rescue
+        path = "<path id='error' icon=#{ icon } />"
+      end
+
+      @schema[group][:weights] << weight
+      @schema[group][:icons][variation][weight] = path
     end
   end
 end
 
-puts 'Generating a new Preview file'
-template = File.read('lib/public/fluent-ui-icons.template.html.erb')
-result   = ERB.new(template).result(binding)
+puts 'Skipping schema generation. Not yet implemented..'
 
-File.open('lib/public/fluent-ui-icons.html', 'w+') do |f|
-  f.write(result)
+File.open('lib/build/data.json', 'w+') do |f|
+  f.write(@schema.to_json)
 end
 
-@docs = true
+# puts 'Generating a new Preview file'
+# template = File.read('lib/public/fluent-ui-icons.template.html.erb')
+# result   = ERB.new(template).result(binding)
 
-template = File.read('lib/public/fluent-ui-icons.template.html.erb')
-result   = ERB.new(template).result(binding)
+# File.open('lib/public/fluent-ui-icons.html', 'w+') do |f|
+#   f.write(result)
+# end
 
-File.open('docs/index.html', 'w+') do |f|
-  f.write(result)
-end
+# @docs = true
+
+# template = File.read('lib/public/fluent-ui-icons.template.html.erb')
+# result   = ERB.new(template).result(binding)
+
+# File.open('docs/index.html', 'w+') do |f|
+#   f.write(result)
+# end
 
 puts 'Cleaning up'
 FileUtils.rm_rf('fluentui-system-icons') if Dir.exists?('fluentui-system-icons')
