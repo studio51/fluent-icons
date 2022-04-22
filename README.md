@@ -10,8 +10,7 @@ I'm happy to merge anything that'll make this work with any other Rails app.
 ## Considerations
 
 - Currently, the gem has to be updated manually each time the fluent repository gets updated. Expect weekly updates.
-- The gem stores a copy of all SVG images available in the FluentUI Icon library. It's biiiiig!
-- It uses Nokogiri to allow the Icon helper to dynamically set the SVG class and dataset attributes.
+- The gem stores a copy of all SVG images available in the FluentUI Icon library. It's beefy!
 
 ## Installation
 
@@ -31,6 +30,9 @@ Or install it yourself as:
 
 ## Usage
 
+Plain Ruby `FluentIcons::Fluent.new('add', style: 'regular', weight: 20, **options)`
+Rails `fluent('add', style: 'regular', weight: 20, **options)`
+
 By default, the helper will use `weight: 20` of the SVG icon. However, not all of them have a weight of 20.
 If the SVG image is not found, you should try a different weight like so: `fluent('add', weight: 24)`
 
@@ -47,14 +49,16 @@ To avoid having to add the `fill-current` class each time, you can add these CSS
 
 - [ ] Add a ViewComponent option
 - [ ] Add CSS fonts
-- [ ] Get rid of Nokogiri
-- [ ] Find a better way to store the icons, or better yet, use Github Actions to generate them automatically on new releases
-- [ ] Add a way to search them on Github Pages
+- [x] Get rid of Nokogiri
+- [x] Find a better way to store the icons. (updated: They are now stored in a JSON file)
+- [ ] Use Github Actions to update the build folder and generate the required schema automatically on new releases
+- [x] <s>Add a way to search them on Github Pages</s> (updated: https://fluenticons.co/ is pretty good)
 - [ ] Render raw SVG, instead of images, when previewing so we can dynamically set color and size, if needed
+- [ ] Include TailwindCSS extension to allow for dynamic color and size when rendering the icon
 
 ## Update
 
-To update the icons, run `bin/update`.
+To update the icons, run `bin/update`. This will copy all the icons from the FluentUI Icon library to the `lib/data/svg` directory and create the new `data.json` with the updated schema.
 
 ## Development
 
