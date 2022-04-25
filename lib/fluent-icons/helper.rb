@@ -12,10 +12,11 @@ module FluentIcons
     cache_key = [symbol, options]
 
     unless (tag = fluent_helper_cache[cache_key])
-      fluent_helper_cache[cache_key] = FluentIcons::Fluent.new(symbol, options).to_svg
+      icon = FluentIcons::Fluent.new(symbol, options)
+      fluent_helper_cache[cache_key] = icon.to_svg
     end
 
-    tag
+    tag&.html_safe
   end
-  alias_method :fluent_icon, :fluent 
+  alias :fluent_icon :fluent 
 end
