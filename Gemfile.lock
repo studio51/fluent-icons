@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fluent-icons (1.0.1.167)
+    fluent-icons (1.0.2.167)
       actionview (>= 6)
       railties (>= 6)
 
@@ -39,10 +39,8 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     method_source (1.0.0)
-    mini_portile2 (2.8.0)
     minitest (5.15.0)
-    nokogiri (1.13.4)
-      mini_portile2 (~> 2.8.0)
+    nokogiri (1.13.4-x86_64-darwin)
       racc (~> 1.4)
     options (2.3.2)
     progress_bar (1.3.3)
