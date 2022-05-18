@@ -1,4 +1,4 @@
 module FluentIcons
-  FLUENT_UI_ICONS_VERSION = '1.1.167'.freeze
-  VERSION = '1.0.2.167'.freeze
+  FLUENT_UI_ICONS_VERSION = '1.1.170'.freeze
+  VERSION = '1.0.2.170'.freeze
 end
