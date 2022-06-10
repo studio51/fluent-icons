@@ -30,7 +30,7 @@ GEM
     concurrent-ruby (1.1.10)
     crass (1.0.6)
     erubi (1.10.0)
-    git (1.9.1)
+    git (1.11.0)
       rchardet (~> 1.8)
     highline (2.0.3)
     i18n (1.10.0)
