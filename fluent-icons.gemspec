@@ -14,8 +14,9 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
   spec.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
 
-  spec.files         = Dir['{lib}/**/*'] + ['LICENSE.txt', 'CODE_OF_CONDUCT.md', 'README.md']
-
+  spec.files = Dir['{lib}/**/*'] + ['LICENSE.txt', 'CODE_OF_CONDUCT.md', 'README.md']
+  spec.files -= ['{lib}/svg/']
+  
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/studio51/fluent-ui-icons'
   spec.metadata['changelog_uri'] = 'https://github.com/studio51/fluent-ui-icons/blob/main/CHANGELOG.md'
