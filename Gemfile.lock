@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fluent-icons (1.0.2.172)
+    fluent-icons (1.0.2.178)
       actionview (>= 6)
       railties (>= 6)
 
@@ -29,7 +29,7 @@ GEM
     builder (3.2.4)
     concurrent-ruby (1.1.10)
     crass (1.0.6)
-    erubi (1.10.0)
+    erubi (1.11.0)
     git (1.11.0)
       rchardet (~> 1.8)
     highline (2.0.3)
@@ -41,7 +41,7 @@ GEM
     method_source (1.0.0)
     mini_portile2 (2.8.0)
     minitest (5.16.2)
-    nokogiri (1.13.7)
+    nokogiri (1.13.8)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     options (2.3.2)
