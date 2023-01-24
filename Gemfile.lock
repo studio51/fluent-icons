@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fluent-icons (1.0.2.186)
+    fluent-icons (1.1.2.190)
       actionview (>= 6)
       railties (>= 6)
 
