@@ -8,7 +8,7 @@ require 'git'
 require 'fileutils'
 require 'progress_bar'
 
-if Dir.exists?('fluentui-system-icons')
+if Dir.exist?('fluentui-system-icons')
   puts "Theres's already a copy of 'microsoft/fluentui-system-icons'. You should probably remove that first! Skipping.."
 else
   puts "Cloning the 'microsoft/fluentui-system-icons' repository. This might take a while.."
@@ -85,4 +85,4 @@ if @generate_docs
 end
 
 puts 'Cleaning up'
-FileUtils.rm_rf('fluentui-system-icons') if Dir.exists?('fluentui-system-icons')
+FileUtils.rm_rf('fluentui-system-icons') if Dir.exist?('fluentui-system-icons')
