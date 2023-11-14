@@ -18,37 +18,37 @@
         <h1 class=''>Regular</h1>
         <p>ic_fluent_{ name }_#{ weight }_regular.svg</p>
       </div>
-      
+
       <div class="col-span-5">
         <h1 class=''>Filled</h1>
         <p>ic_fluent_{ name }_#{ weight }_filled.svg</p>
       </div>
-      
+
       <% @icons.sort_by { |key, _| key }.each do |key, pack| %>
-        
+
         <div class="col-span-1">
           <h1 class='font-medium text-lg'>
             <%= key.split('_').map(&:capitalize).join(' ') %>
           </h1>
         </div>
-        
+
         <% [:regular, :filled].each do |variation| %>
-          
+
           <div class='col-span-5'>
             <div class="grid grid-cols-12 gap-0.5">
 
-              <% pack[:icons][variation].sort_by { |icon| icon[:weight] }.each do |icon| %>
+              <%# pack[:icons][variation].sort_by { |icon| icon[:weight] }.each do |icon| %>
                 <div class="col-span-2 bg-gray-50 bg-opacity-20 p-2 rounded-md">
-                  <img src='.' data-src='<%= @docs ? "#{ icon[:src].gsub('../../', 'https://raw.githubusercontent.com/studio51/fluent-ui-icons/main/') }" : icon[:src] %>' alt='<%= icon[:src].split('/').last %>' class='lazy w-8 h-8' />
+                  <img src='.' data-src='<%= @docs ? "#{ icon[:src] }" : icon[:src] %>' alt='<%= icon[:src].split('/').last %>' class='lazy w-8 h-8' />
 
                   Name: <p class='text-xs'><%= icon[:name] %></p>
                   Weight: <p class='text-xs'><%= icon[:weight] %></p>
                 </div>
-              <% end %>
-      
+              <%# end %>
+
             </div>
           </div>
-      
+
         <% end %> <!-- -->
       <% end %> <!-- -->
 

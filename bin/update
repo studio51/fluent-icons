@@ -15,51 +15,73 @@ else
   Git.clone('https://github.com/microsoft/fluentui-system-icons.git', 'fluentui-system-icons')
 end
 
-puts 'Transferring the SVG Icons'
-icons = Dir['fluentui-system-icons/assets/*/SVG/*']
-progress_bar = ProgressBar.new(icons.size)
+@schema = {
+  'name'       => 'Fluent UI Icons',
+  'icons'      => {},
+  'dictionary' => {},
 
-icons.each do |icon|
-  FileUtils.copy(icon, 'lib/build/svg')
-  progress_bar.increment!
-end
-
-puts 'Organising the Icons'
-
-@generate_docs = false
-@docs = false
-@schema = {}
-
-Dir['lib/build/svg/*.svg'].map { |icon| icon.split('/').last.split('.').first }.group_by { |icon| icon.split('_')[2..][-0..-3].join('_') }.each do |group, icons|
-  @schema[group] = {
-    name: icons[0].split('_')[0..-3].join('_'),
-    weights: [],
-    styles: [],
-    icons: { }
+  'errors' => {
+    'metadata' => [],
+    'icons' => []
   }
+}
 
-  icons.group_by { |icon| icon.split('_').last }.each do |variation, icons|
-    @schema[group][:icons][variation] = {}
-    @schema[group][:styles] << variation
+files = Dir.glob(File.join('fluentui-system-icons', 'assets', '*', '{SVG/*,metadata.json}')).group_by { |file| file.split(File::SEPARATOR)[2] }
 
-    icons.each do |icon|
-      name   = icon.split('_')[2..-3].join('_')
-      weight = icon.split('_')[-2]
-      src    = ['lib/build/svg', "#{ icon }.svg"].join('/')
+groups_pb = ProgressBar.new(files.map(&:first).size)
+icons_pb  = ProgressBar.new(files.map(&:last).flatten.size)
+
+files.each do |group, files|
+  icon_name = group.split.join('_').downcase
+
+  metadata_file = files.find { |file| file.end_with?('metadata.json') }
+
+  unless (metadata = JSON.parse(File.read(metadata_file)) rescue nil)
+    @schema['errors']['metadata'] << icon_name
+
+    # TODO: Build the metadata based on the files in the folder
+    #
+    metadata = {
+      'name'     => group,
+      'size'     => [],
+      'style'    => [],
+      'metaphor' => []
+    }
+  end
+
+  metadata['label'] = metadata['name']
+  metadata['name']  = icon_name
+  metadata['icons'] = {}
+  metadata['metaphor']&.map!(&:downcase)
+
+  metadata['style'].map(&:downcase).each do |style|
+    metadata['icons'][style] = {}
+
+    metadata['size'].each do |size|
+      svg_file_path = File.join('fluentui-system-icons', 'assets', group, 'SVG', "ic_fluent_#{icon_name}_#{size}_#{style}.svg")
+      # next unless File.exist?(svg_file_path)
 
       begin
-        path = "#{ File.read(src).match(/.*<path([^\/]*)/)[0] } />"
-      rescue
-        path = "<path id='error' icon=#{ icon } />"
+        metadata['icons'][style][size] = File.read(svg_file_path).match(/.*<path([^\/]*)/)[0]
+      rescue => e
+        @schema['errors']['icons'] << icon_name
+        metadata['icons'][style][size] = "<path id='error' icon=#{ icon_name } />"
       end
 
-      @schema[group][:weights] << weight
-      @schema[group][:icons][variation][weight] = path
+      icons_pb.increment!
     end
   end
+
+  @schema['icons'][icon_name] = metadata
+
+  metadata['metaphor']&.each { |metaphor| @schema['dictionary'][metaphor] = icon_name }
+
+  groups_pb.increment!
 end
 
-puts 'Skipping schema generation. Not yet implemented..'
+if (@schema['errors']['metadata'] || @schema['errors']['icons']).any?
+  puts "I couldn't process #{@schema['errors']['metadata'].size} sets, and #{@schema['errors']['icons'].size} icons. This is likely due the metadata file missing, or the icon not being available."
+end
 
 File.open('lib/build/data.json', 'w+') do |f|
   f.write(@schema.to_json)
@@ -67,6 +89,7 @@ end
 
 if @generate_docs
   puts 'Generating a new Preview file'
+
   template = File.read('lib/public/fluent-ui-icons.template.html.erb')
   result   = ERB.new(template).result(binding)
 
@@ -84,5 +107,5 @@ if @generate_docs
   end
 end
 
-puts 'Cleaning up'
-FileUtils.rm_rf('fluentui-system-icons') if Dir.exist?('fluentui-system-icons')
+# puts 'Cleaning up'
+# FileUtils.rm_rf('fluentui-system-icons') if Dir.exist?('fluentui-system-icons')
