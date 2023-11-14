@@ -1,0 +1,22 @@
+name: Update Fluent Icons
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Run Update Script
+      run: bin/update
+
+    - name: Commit and Push, if necessary
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git diff --quiet && git diff --staged --quiet || (git commit -am 'Update Fluent Icons'; git push)
