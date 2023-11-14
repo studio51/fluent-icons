@@ -7,10 +7,9 @@ module FluentIcons
 
       @style  = (options.delete(:style) || 'regular').to_s
       @weight = (options.delete(:weight) || 20).to_s
-      @prefix = (options.delete(:prefix) || 'fluent').to_s
-      @width   = (options[:width] || weight).to_i
-      @height  = (options[:height] || weight).to_i
+
       @options = options.dup
+
       merge_options
     end
 
@@ -71,15 +70,14 @@ module FluentIcons
     end
 
     def get_fluent_path(symbol, style, weight)
-      icon ||= FluentIcons::SYMBOLS[symbol]
-      # if (icon = FluentIcons::SYMBOLS[symbol])
+      if (icon = FluentIcons::SYMBOLS[symbol])
 
         return {
           name:     icon['name'],
           keywords: [],
           path:     icon.dig('icons', style, weight)
         }
-      # end
+      end
     end
   end
 end
