@@ -1,6 +1,7 @@
 require 'json'
 require 'fluent-icons/version'
 require 'fluent-icons/fluent'
+require 'fluent-icons/cache'
 
 if defined?(Rails)
   require 'fluent-icons/helper'
