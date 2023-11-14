@@ -37,14 +37,14 @@
           <div class='col-span-5'>
             <div class="grid grid-cols-12 gap-0.5">
 
-              <% pack[:icons][variation].sort_by { |icon| icon[:weight] }.each do |icon| %>
-                <div class="col-span-2 bg-gray-50 bg-opacity-20 p-2 rounded-md">
-                  <img src='.' data-src='<%= @docs ? "#{ icon[:src] }" : icon[:src] %>' alt='<%= icon[:src].split('/').last %>' class='lazy w-8 h-8' />
+              <%# pack[:icons][variation].sort_by { |icon| icon[:weight] }.each do |icon| %>
+<!--                <div class="col-span-2 bg-gray-50 bg-opacity-20 p-2 rounded-md">-->
+<!--                  <img src='.' data-src='<%#= @docs ? "#{ icon[:src] }" : icon[:src] %>' alt='<%#= icon[:src].split('/').last %>' class='lazy w-8 h-8' />-->
 
-                  Name: <p class='text-xs'><%= icon[:name] %></p>
-                  Weight: <p class='text-xs'><%= icon[:weight] %></p>
-                </div>
-              <% end %>
+<!--                  Name: <p class='text-xs'><%#= icon[:name] %></p>-->
+<!--                  Weight: <p class='text-xs'><%#= icon[:weight] %></p>-->
+<!--                </div>-->
+              <%# end %>
 
             </div>
           </div>
