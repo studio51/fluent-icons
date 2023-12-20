@@ -21,8 +21,8 @@ Gem::Specification.new do |spec|
   spec.metadata['source_code_uri'] = 'https://github.com/studio51/fluent-ui-icons'
   spec.metadata['changelog_uri'] = 'https://github.com/studio51/fluent-ui-icons/blob/main/CHANGELOG.md'
 
-  spec.add_dependency 'actionview', '>= 6'
-  spec.add_dependency 'railties', '>= 6'
+  spec.add_dependency 'actionview', '~> 7.1'
+  spec.add_dependency 'railties', '~> 7.1'
   
   spec.add_development_dependency 'git', '~> 1.18'
   spec.add_development_dependency 'progress_bar', '~> 1.3'
