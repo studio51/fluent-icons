@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fluent-icons (1.1.2.207)
+    fluent-icons (1.1.2.224)
       actionview (>= 6)
       railties (>= 6)
 
@@ -81,9 +81,9 @@ PLATFORMS
 
 DEPENDENCIES
   fluent-icons!
-  git (~> 1.9)
+  git (~> 1.18)
   progress_bar (~> 1.3)
   rake (~> 12.0)
 
 BUNDLED WITH
-   2.4.10
+   2.4.22

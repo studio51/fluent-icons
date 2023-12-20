@@ -24,6 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'actionview', '>= 6'
   spec.add_dependency 'railties', '>= 6'
   
-  spec.add_development_dependency 'git', '~> 1.9'
+  spec.add_development_dependency 'git', '~> 1.18'
   spec.add_development_dependency 'progress_bar', '~> 1.3'
 end
