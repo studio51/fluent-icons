@@ -1,6 +1,4 @@
 #!/usr/bin/env ruby
-require 'pry'
-
 require 'bundler/setup'
 require 'fluent-icons'
 
