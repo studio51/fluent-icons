@@ -2,6 +2,24 @@ module FluentIcons
   class Fluent
     attr_reader :path, :options, :width, :height, :symbol, :keywords, :weight, :style, :prefix
 
+    @@path_cache = {}
+
+    def get_fluent_path(symbol, style, weight)
+      cache_key = "#{symbol}:#{style}:#{weight}"
+
+      return @@path_cache[cache_key] if @@path_cache.key?(cache_key)
+
+      if (icon = FluentIcons::SYMBOLS[symbol])
+        result = {
+          name: icon['name'],
+          keywords: [],
+          path: icon.dig('icons', style, weight)
+        }
+        @@path_cache[cache_key] = result
+        return result
+      end
+    end
+
     def initialize(symbol, options = {})
       @symbol = symbol.to_s
 
@@ -35,6 +53,50 @@ module FluentIcons
     end
 
   private
+    def initialize(symbol, options = {})
+      @symbol = symbol.to_s
+      @options = options.dup
+
+      # Use default values in variable initialization
+      @style = (options.delete(:style) || 'regular').to_s
+      @weight = (options.delete(:weight) || 20).to_s
+      @prefix = (options.delete(:prefix) || 'fluent').to_s
+
+      # Cache width and height calculations
+      @width = (options[:width] || weight).to_i
+      @height = (options[:height] || weight).to_i
+
+      # Combine options merging
+      @options.merge!(
+        class: classes,
+        viewBox: "0 0 #{width} #{height}",
+        version: '1.1'
+      ).merge!(a11y)
+
+      # Use memoized path lookup
+      set_path
+    end
+
+    private
+
+    def set_path
+      fluent = get_fluent_path(@symbol, style, weight)
+      @path = if fluent&.dig(:path).nil?
+                # Default path string (consider moving this to a constant)
+                "<path d=\"M7 4.5C7...\" fill=\"currentColor\" />"
+              else
+                fluent[:path]
+              end
+    end
+    def html_attributes
+      # Use string interpolation instead of concatenation
+      options.map { |attr, value| %Q(#{attr}="#{value}") }.join(' ')
+    end
+
+    def classes
+      # Use array join instead of string concatenation
+      [prefix, "#{prefix}-#{symbol}", options[:class]].compact.join(' ').strip
+    end
 
     def html_attributes
       attrs = ''
