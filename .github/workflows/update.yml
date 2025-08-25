@@ -1,22 +1,57 @@
-name: Update Fluent Icons
+name: Daily Fluent Icons Sync
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 2 * * *'
+  workflow_dispatch:
 
 jobs:
-  update:
+  sync-icons:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-
-    - name: Run Update Script
-      run: bin/update
-
-    - name: Commit and Push, if necessary
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1'
+        bundler-cache: true
+    
+    - name: Create necessary directories
+      run: |
+        mkdir -p lib/build/svg
+        mkdir -p docs
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git
+    
+    - name: Run icon sync script
+      run: ruby bin/update
+    
+    - name: Check for changes
+      id: verify-changed-files
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "changed=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Commit and push changes
+      if: steps.verify-changed-files.outputs.changed == 'true'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git diff --quiet && git diff --staged --quiet || (git commit -am 'Update Fluent Icons'; git push)
+        git add .
+        git commit -m "Daily sync: Update Fluent UI icons [$(date +'%Y-%m-%d')]"
+        git push
+    
+    - name: No changes detected
+      if: steps.verify-changed-files.outputs.changed == 'false'
+      run: echo "No changes detected in icons"
