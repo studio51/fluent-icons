@@ -8,6 +8,9 @@
 /spec/reports/
 /tmp/
 
+# Built gem files
+*.gem
+
 .DS_Store
 /*/.DS_Store
 
