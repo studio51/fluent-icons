@@ -2,8 +2,8 @@ name: Auto Update Icons
 
 on:
   schedule:
-    # Run daily at 2 AM UTC
-    - cron: '0 2 * * *'
+    # Run weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
   workflow_dispatch: # Allow manual trigger
 
 jobs:
@@ -36,6 +36,14 @@ jobs:
           # Get version from packages/react-native-icons/package.json
           cd temp-fluent
           FLUENT_VERSION=$(node -p "require('./packages/react-native-icons/package.json').version")
+
+          # Validate version format (should be X.Y.Z)
+          if [[ ! "$FLUENT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Invalid version format: '$FLUENT_VERSION'"
+            echo "Expected format: X.Y.Z (e.g., 1.1.324)"
+            exit 1
+          fi
+
           echo "version=$FLUENT_VERSION" >> $GITHUB_OUTPUT
           echo "FluentUI version: $FLUENT_VERSION"
 
