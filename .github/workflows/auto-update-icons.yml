@@ -87,8 +87,8 @@ jobs:
           MINOR="${VERSION_PARTS[1]}"
           PATCH="${VERSION_PARTS[2]}"
 
-          # Create new gem version (2.0.0.PATCH)
-          NEW_GEM_VERSION="2.0.0.${PATCH}"
+          # Create new gem version (3.0.0.PATCH)
+          NEW_GEM_VERSION="3.0.0.${PATCH}"
 
           # Update version.rb
           cat > lib/fluent-icons/version.rb << EOF
