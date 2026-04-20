@@ -1,0 +1,30 @@
+# 1.3.4
+
+ - Updated dependencies (#63)
+ - Relaxed highline gem requirement to allow 3.x (#62, Thanks to @dgholz)
+
+# 1.3.3
+
+ * Fixed use of unqualified ::Time that was conflicting with another
+   ProgressBar gem [#58](https://github.com/paul/progress_bar/pull/58).
+   Thanks to [harryloewen](https://github.com/harryloewen) for the
+   [report](https://github.com/paul/progress_bar/issues/57)
+
+# 1.3.2
+
+ * Added `ProgressBar#puts`, to be able to print text to the output without
+   interfering with the rendering of the bar output.
+   [#56](https://github.com/paul/progress_bar/pull/56) Thanks to
+   [TRex22](https://github.com/TRex22) for the suggestion in
+   [#44](https://github.com/paul/progress_bar/pull/44).
+
+# 1.3.1
+
+ * Added support for passing bar options to `Enumerable#with_progress`
+   extension.
+
+# 1.3.0
+
+ * Relaxed highline gem requirement to allow highline 2.0 as well as 1.6+
+
+
