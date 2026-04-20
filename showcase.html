@@ -123,7 +123,7 @@
 
     <!-- Filters (Fixed) -->
     <div class="fixed top-[88px] left-0 right-0 bg-background border-b border-border z-40">
-        <div class="px-4 py-4">
+        <div class="px-4 py-3">
             <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
                 <!-- Search -->
                 <div class="flex-1 w-full md:w-auto">
@@ -160,40 +160,53 @@
                 </div>
             </div>
 
-            <!-- Results count -->
-            <div class="mt-4">
-                <p class="text-sm text-muted-foreground">
-                    Showing <span id="showing-count">0</span> of <span id="filtered-count">0</span> icons
-                </p>
-            </div>
         </div>
     </div>
 
     <!-- Main Content Area -->
-    <div class="fixed top-[228px] left-0 right-0 bottom-0 flex">
+    <div class="fixed top-[188px] left-0 right-0 bottom-0 flex">
         <!-- Left: Icon Grid (Scrollable) -->
-        <div class="flex-1 overflow-y-auto px-4 py-6">
-            <div id="icon-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4">
-                <!-- Icons will be inserted here -->
+        <div class="flex-1 flex flex-col relative">
+            <!-- Icon Grid Area (Scrollable) -->
+            <div class="flex-1 overflow-y-auto px-4 pt-6 pb-20">
+                <div id="icon-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 2xl:grid-cols-12 gap-3">
+                    <!-- Icons will be inserted here -->
+                </div>
+
+                <!-- No Results -->
+                <div id="no-results" class="text-center py-12" style="display: none;">
+                    <svg class="mx-auto h-12 w-12 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h3 class="mt-4 text-lg font-semibold text-foreground">No icons found</h3>
+                    <p class="mt-2 text-sm text-muted-foreground">Try adjusting your search or filters</p>
+                </div>
             </div>
 
-            <!-- Load More Button -->
-            <div class="mt-8 text-center pb-8" id="load-more-container" style="display: none;">
-                <button
-                    onclick="loadMore()"
-                    class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-8"
-                >
-                    Load More Icons
-                </button>
-            </div>
+            <!-- Sticky Footer -->
+            <div class="sticky bottom-0 border-t border-border bg-background shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] px-4 py-3">
+                <div class="flex items-center justify-between gap-4">
+                    <!-- Left: Load More Button & Count -->
+                    <div class="flex items-center gap-3">
+                        <div id="load-more-container" style="display: none;">
+                            <button
+                                onclick="loadMore()"
+                                class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-8 px-4"
+                            >
+                                Load More
+                            </button>
+                        </div>
 
-            <!-- No Results -->
-            <div id="no-results" class="text-center py-12" style="display: none;">
-                <svg class="mx-auto h-12 w-12 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <h3 class="mt-4 text-lg font-semibold text-foreground">No icons found</h3>
-                <p class="mt-2 text-sm text-muted-foreground">Try adjusting your search or filters</p>
+                        <p class="text-xs text-muted-foreground whitespace-nowrap">
+                            Showing <span id="showing-count" class="font-medium text-foreground">0</span> of <span id="filtered-count" class="font-medium text-foreground">0</span>
+                        </p>
+                    </div>
+
+                    <!-- Right: Pagination Controls -->
+                    <div id="pagination-controls" class="flex items-center gap-1">
+                        <!-- Pagination will be inserted here -->
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -293,7 +306,7 @@
         let currentSize = 'all';
         let currentSearch = '';
         let displayedCount = 0;
-        const ICONS_PER_PAGE = 120;
+        const ICONS_PER_PAGE = 240;
 
         // Load icons data
         async function loadIconsData() {
@@ -383,18 +396,32 @@
             });
 
             displayedCount = end;
+            updateFooter();
+        }
+
+        // Update footer with pagination info
+        function updateFooter() {
             document.getElementById('showing-count').textContent = displayedCount.toLocaleString();
+
+            // Calculate pagination
+            const totalPages = Math.ceil(filteredIcons.length / ICONS_PER_PAGE);
+            const currentPage = Math.ceil(displayedCount / ICONS_PER_PAGE);
 
             // Show/hide load more button
             const loadMoreBtn = document.getElementById('load-more-container');
+
             if (displayedCount < filteredIcons.length) {
                 loadMoreBtn.style.display = 'block';
             } else {
                 loadMoreBtn.style.display = 'none';
             }
 
+            // Render pagination controls
+            renderPaginationControls(currentPage, totalPages);
+
             // Show/hide no results
             const noResults = document.getElementById('no-results');
+            const grid = document.getElementById('icon-grid');
             if (filteredIcons.length === 0) {
                 noResults.style.display = 'block';
                 grid.style.display = 'none';
@@ -404,10 +431,175 @@
             }
         }
 
+        // Render pagination controls
+        function renderPaginationControls(currentPage, totalPages) {
+            const container = document.getElementById('pagination-controls');
+
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            // First button
+            html += `
+                <button
+                    onclick="goToPage(1)"
+                    ${currentPage === 1 ? 'disabled' : ''}
+                    class="inline-flex items-center justify-center h-8 px-2.5 text-xs font-medium rounded border transition-colors ${
+                        currentPage === 1
+                            ? 'border-border bg-background text-muted-foreground cursor-not-allowed opacity-50'
+                            : 'border-border bg-background hover:bg-accent hover:text-accent-foreground'
+                    }"
+                >
+                    First
+                </button>
+            `;
+
+            // Previous arrow
+            html += `
+                <button
+                    onclick="goToPage(${currentPage - 1})"
+                    ${currentPage === 1 ? 'disabled' : ''}
+                    class="inline-flex items-center justify-center h-8 w-8 text-sm font-medium rounded border transition-colors ${
+                        currentPage === 1
+                            ? 'border-border bg-background text-muted-foreground cursor-not-allowed opacity-50'
+                            : 'border-border bg-background hover:bg-accent hover:text-accent-foreground'
+                    }"
+                >
+                    ‹
+                </button>
+            `;
+
+            // Page numbers
+            const pageNumbers = getPageNumbers(currentPage, totalPages);
+
+            pageNumbers.forEach((page) => {
+                if (page === '...') {
+                    html += `
+                        <span class="inline-flex items-center justify-center h-8 px-1 text-xs text-muted-foreground">
+                            …
+                        </span>
+                    `;
+                } else {
+                    html += `
+                        <button
+                            onclick="goToPage(${page})"
+                            class="inline-flex items-center justify-center h-8 min-w-[2rem] px-2 text-xs font-medium rounded border transition-colors ${
+                                page === currentPage
+                                    ? 'border-primary bg-primary text-primary-foreground'
+                                    : 'border-border bg-background hover:bg-accent hover:text-accent-foreground'
+                            }"
+                        >
+                            ${page}
+                        </button>
+                    `;
+                }
+            });
+
+            // Next arrow
+            html += `
+                <button
+                    onclick="goToPage(${currentPage + 1})"
+                    ${currentPage === totalPages ? 'disabled' : ''}
+                    class="inline-flex items-center justify-center h-8 w-8 text-sm font-medium rounded border transition-colors ${
+                        currentPage === totalPages
+                            ? 'border-border bg-background text-muted-foreground cursor-not-allowed opacity-50'
+                            : 'border-border bg-background hover:bg-accent hover:text-accent-foreground'
+                    }"
+                >
+                    ›
+                </button>
+            `;
+
+            // Last button
+            html += `
+                <button
+                    onclick="goToPage(${totalPages})"
+                    ${currentPage === totalPages ? 'disabled' : ''}
+                    class="inline-flex items-center justify-center h-8 px-2.5 text-xs font-medium rounded border transition-colors ${
+                        currentPage === totalPages
+                            ? 'border-border bg-background text-muted-foreground cursor-not-allowed opacity-50'
+                            : 'border-border bg-background hover:bg-accent hover:text-accent-foreground'
+                    }"
+                >
+                    Last
+                </button>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Get page numbers to display with ellipsis
+        function getPageNumbers(currentPage, totalPages) {
+            const pages = [];
+
+            if (totalPages <= 5) {
+                // Show all pages if 5 or fewer
+                for (let i = 1; i <= totalPages; i++) {
+                    pages.push(i);
+                }
+            } else {
+                // Always show first page
+                pages.push(1);
+
+                if (currentPage <= 2) {
+                    // Near the start: 1 2 ... 13
+                    pages.push(2);
+                    pages.push('...');
+                    pages.push(totalPages);
+                } else if (currentPage >= totalPages - 1) {
+                    // Near the end: 1 ... 12 13
+                    pages.push('...');
+                    pages.push(totalPages - 1);
+                    pages.push(totalPages);
+                } else {
+                    // In the middle: 1 ... 5 ... 13
+                    pages.push('...');
+                    pages.push(currentPage);
+                    pages.push('...');
+                    pages.push(totalPages);
+                }
+            }
+
+            return pages;
+        }
+
+        // Go to specific page
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredIcons.length / ICONS_PER_PAGE);
+
+            // Validate page
+            if (page < 1 || page > totalPages) return;
+
+            // Clear grid
+            const grid = document.getElementById('icon-grid');
+            grid.innerHTML = '';
+
+            // Calculate start and end indices for this specific page
+            const start = (page - 1) * ICONS_PER_PAGE;
+            const end = Math.min(start + ICONS_PER_PAGE, filteredIcons.length);
+            const iconsToDisplay = filteredIcons.slice(start, end);
+
+            // Render only the icons for this page
+            iconsToDisplay.forEach(icon => {
+                const card = createIconCard(icon);
+                grid.appendChild(card);
+            });
+
+            // Update displayed count to reflect this page
+            displayedCount = end;
+            updateFooter();
+
+            // Scroll to top of icon grid
+            document.querySelector('.flex-1.overflow-y-auto').scrollTop = 0;
+        }
+
         // Create icon card
         function createIconCard(icon) {
             const div = document.createElement('div');
-            div.className = 'icon-card group relative flex flex-col items-center justify-center p-4 border border-border rounded-lg hover:border-primary hover:shadow-md cursor-pointer bg-card transition-all';
+            div.className = 'icon-card group relative flex flex-col items-center justify-center p-3 border border-border rounded-lg hover:border-primary hover:shadow-md cursor-pointer bg-card transition-all';
             div.dataset.iconName = icon.name;
 
             // Get first available style and weight
@@ -416,16 +608,13 @@
             const pathData = icon.icons[style]?.[weight] || '';
 
             div.innerHTML = `
-                <div class="w-12 h-12 flex items-center justify-center mb-2">
-                    <svg width="32" height="32" viewBox="0 0 ${weight} ${weight}" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-foreground">
+                <div class="w-10 h-10 flex items-center justify-center mb-2">
+                    <svg width="28" height="28" viewBox="0 0 ${weight} ${weight}" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-foreground">
                         ${pathData}
                     </svg>
                 </div>
-                <div class="text-xs text-center text-muted-foreground group-hover:text-foreground transition-colors font-medium truncate w-full px-1">
+                <div class="text-xs text-center text-muted-foreground group-hover:text-foreground transition-colors font-medium truncate w-full">
                     ${icon.name}
-                </div>
-                <div class="text-[10px] text-muted-foreground mt-1">
-                    ${icon.styles.join(', ')} · ${icon.weights.join(', ')}
                 </div>
             `;
 
