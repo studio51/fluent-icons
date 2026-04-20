@@ -1,11 +1,24 @@
-# Fluent::Icons
+# Fluent Icons
 
-This gem allows you to use Microsoft's Fluent Icons package in a Rails app through the `fluent()` helper.
-This has been extracted from https://games.directory without any other consideration, as such, if it doesn't work for you, you can either open an Issue or Pull Request.
+Microsoft's Fluent UI System Icons for Ruby on Rails and React applications.
+
+This project provides two packages:
+- **Ruby Gem**: For Ruby on Rails applications
+- **React Library**: For React/Next.js applications
 
 https://github.com/microsoft/fluentui-system-icons
 
-I'm happy to merge anything that'll make this work with any other Rails app.
+## Quick Links
+
+- [Rails Gem Documentation](#rails-gem) (below)
+- [React Library Documentation](./react/README.md)
+- [Icon Showcase](./showcase.html) - Browse all 2,998 icons
+
+---
+
+## Rails Gem
+
+This gem allows you to use Microsoft's Fluent Icons package in a Rails app through the `fluent()` helper.
 
 ## Performance & Optimization
 
@@ -136,6 +149,60 @@ rake fluent_icons:clear_cache
 ## Update
 
 To update the icons, run `bin/update`. This will copy all the icons from the FluentUI Icon library to the `lib/data/svg` directory and create the new `data.json` with the updated schema.
+
+---
+
+## React Library
+
+For React applications, we provide a separate npm package with TypeScript support.
+
+### Installation
+
+```bash
+npm install @fluent-icons/react
+# or
+yarn add @fluent-icons/react
+```
+
+### Usage
+
+```tsx
+import { FluentIcon } from '@fluent-icons/react';
+
+function App() {
+  return (
+    <div>
+      <FluentIcon name="add" size={20} style="regular" />
+      <FluentIcon name="delete" size={24} style="filled" className="text-red-500" />
+    </div>
+  );
+}
+```
+
+### Features
+
+- ✅ **TypeScript support** - Full type definitions included
+- ✅ **Tree-shakeable** - Only bundle icons you use
+- ✅ **2,998 icons** - All Fluent UI System Icons
+- ✅ **Multiple styles** - Regular, filled, and more
+- ✅ **Flexible sizing** - Any size supported
+- ✅ **Tailwind-friendly** - Easy to style with utility classes
+- ✅ **Accessibility** - Built-in aria-label support
+- ✅ **Utility functions** - Search, filter, and discover icons
+
+### Documentation
+
+Full React documentation available at [./react/README.md](./react/README.md)
+
+### Building the React Package
+
+```bash
+cd react
+npm install
+npm run build
+```
+
+---
 
 ## Development
 

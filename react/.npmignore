@@ -1,0 +1,17 @@
+# Source files
+src/
+example.tsx
+
+# Config files
+tsconfig.json
+rollup.config.js
+.gitignore
+
+# Development files
+node_modules/
+*.log
+
+# Keep only the built files and README
+!dist/
+!README.md
+!package.json
