@@ -15,7 +15,11 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
 
   spec.files = Dir['{lib}/**/*'] + ['LICENSE.txt', 'CODE_OF_CONDUCT.md', 'README.md']
-  spec.files -= ['{lib}/svg/']
+  # Exclude SVG files and HTML preview files to reduce gem size
+  # SVGs are only needed for the bin/update script, not at runtime
+  spec.files.reject! { |f| f.match(%r{^lib/build/svg/}) }
+  spec.files.reject! { |f| f.match(%r{^lib/build/.*\.html}) }
+  spec.files.reject! { |f| f.match(%r{^lib/build/.*\.erb$}) }
   
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/studio51/fluent-ui-icons'

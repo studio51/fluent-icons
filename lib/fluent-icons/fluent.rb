@@ -61,7 +61,7 @@ module FluentIcons
     end
 
     def get_fluent_path(symbol, style, weight)
-      if (icon = FluentIcons::SYMBOLS[symbol])
+      if (icon = FluentIcons.symbols[symbol])
 
         return {
           name:     icon['name'],
