@@ -62,39 +62,63 @@ FluentIcons::Fluent.new('add', style: 'regular', weight: 20, **options)
 <%= fluent('add', style: 'regular', weight: 20, **options) %>
 ```
 
-### ViewComponent (Optional)
+### ViewComponent Integration (Optional)
 
-If you have [ViewComponent](https://viewcomponent.org/) installed, you can use the component syntax:
+FluentIcons can optionally use [ViewComponent](https://viewcomponent.org/) for rendering - providing better testability and Rails 7.1+ compatibility.
 
-```erb
-<!-- Basic usage -->
-<%= render FluentIcons::Component.new(name: "add") %>
+#### Setup
 
-<!-- With options -->
-<%= render FluentIcons::Component.new(
-  name: "delete",
-  style: "filled",
-  weight: 24,
-  class: "w-6 h-6 text-red-500"
-) %>
-
-<!-- With Hotwire/Turbo -->
-<%= render FluentIcons::Component.new(
-  name: "refresh",
-  data: { action: "click->refresh#icon" }
-) %>
-```
-
-**Installation:**
+1. Add ViewComponent to your Gemfile:
 ```ruby
-# Gemfile
 gem 'view_component'
 gem 'fluent-icons'
 ```
 
-The ViewComponent will automatically use the same caching system as the helper.
+2. Run bundle install:
+```bash
+bundle install
+```
+
+3. Generate the configuration file:
+```bash
+rails generate fluent_icons:install
+```
+
+4. Enable ViewComponent in `config/initializers/fluent_icons.rb`:
+```ruby
+FluentIcons.configure do |config|
+  config.use_view_component = true
+end
+```
+
+That's it! The `fluent()` helper will now use ViewComponent internally - no code changes needed!
+
+#### Usage
+
+```erb
+<!-- Same helper syntax works with or without ViewComponent -->
+<%= fluent('add', style: 'regular', weight: 20) %>
+
+<!-- When ViewComponent is enabled, it's used internally -->
+<%= fluent('delete', style: 'filled', class: 'w-6 h-6 text-red-500') %>
+
+<!-- Works with data attributes for Hotwire/Turbo -->
+<%= fluent('refresh', data: { action: 'click->refresh#icon' }) %>
+```
+
+**Benefits when ViewComponent is enabled:**
+- ✅ Better testability (write ViewComponent tests)
+- ✅ Better compatibility with Rails 7.1+
+- ✅ Follows ViewComponent patterns
+- ✅ Same exact syntax - zero code changes needed
+
+**Advanced:** You can also render the component directly if preferred:
+```erb
+<%= render FluentIcons::Component.new(name: "add", style: "filled") %>
+```
 
 👉 **[Full ViewComponent Documentation](./VIEW_COMPONENT.md)**
+📋 **[Configuration Guide](./CONFIGURATION.md)**
 
 ### Styling
 

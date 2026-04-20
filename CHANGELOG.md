@@ -8,9 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **ViewComponent support**: Added `FluentIcons::Component` for modern, testable icon rendering
-  - Optional integration - only loads if ViewComponent gem is present
-  - Same caching performance as helper method
+- **Opt-in ViewComponent integration**: The `fluent()` helper can optionally use ViewComponent when enabled
+  - Configuration-based opt-in via `FluentIcons.configure`
+  - Generate configuration file with `rails generate fluent_icons:install`
+  - Enable with `config.use_view_component = true` in initializer
+  - Zero code changes required in views - existing `fluent()` calls work unchanged
+  - Gracefully falls back to direct SVG rendering when disabled
+  - Can also use `FluentIcons::Component` directly for advanced use cases
   - Full documentation in VIEW_COMPONENT.md
   - Example usage in examples/view_component_example.erb
 - File-based caching system for rendered SVGs

@@ -11,6 +11,24 @@ module FluentIcons
     # Normalize symbol to string
     symbol = symbol.to_s if symbol.is_a?(Symbol)
 
+    # If ViewComponent is enabled via configuration, use the component
+    if FluentIcons.configuration.use_view_component && defined?(FluentIcons::Component)
+      # Extract style and weight from options
+      style = options.delete(:style) || 'regular'
+      weight = options.delete(:weight) || 20
+
+      # Render the component
+      component = FluentIcons::Component.new(
+        name: symbol,
+        style: style,
+        weight: weight,
+        **options
+      )
+
+      return component.render_in(self)
+    end
+
+    # Fallback to direct SVG rendering
     # Layer 1: In-memory cache (fastest)
     cache_key = [symbol, options]
     tag = fluent_helper_cache.dig(*cache_key)

@@ -1,5 +1,6 @@
 require 'json'
 require 'fluent-icons/version'
+require 'fluent-icons/configuration'
 require 'fluent-icons/fluent'
 require 'fluent-icons/lazy_loader'
 require 'fluent-icons/cache'

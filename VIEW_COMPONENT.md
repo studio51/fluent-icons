@@ -2,22 +2,52 @@
 
 FluentIcons now supports [ViewComponent](https://viewcomponent.org/) for a more modern, testable approach to rendering icons in Rails applications.
 
-## Installation
+## Easy Opt-In Setup 🎉
 
-1. Add ViewComponent to your Gemfile (if not already installed):
+ViewComponent integration is opt-in via configuration. Once enabled, the `fluent()` helper uses ViewComponent internally - no code changes needed!
 
+### Step-by-Step Setup
+
+1. **Add ViewComponent to your Gemfile:**
 ```ruby
 gem 'view_component'
 gem 'fluent-icons'
 ```
 
-2. Run bundle install:
-
+2. **Install the gems:**
 ```bash
 bundle install
 ```
 
-That's it! The FluentIcons::Component will be automatically available if ViewComponent is detected.
+3. **Generate the configuration file:**
+```bash
+rails generate fluent_icons:install
+```
+
+4. **Enable ViewComponent in `config/initializers/fluent_icons.rb`:**
+```ruby
+FluentIcons.configure do |config|
+  config.use_view_component = true
+end
+```
+
+5. **Restart your Rails server**
+
+That's it! Your existing `fluent()` helper calls will now use ViewComponent.
+
+## Automatic Integration
+
+### Before (without ViewComponent):
+```erb
+<%= fluent('add', style: 'filled', class: 'icon') %>
+<!-- Renders SVG directly -->
+```
+
+### After (with ViewComponent):
+```erb
+<%= fluent('add', style: 'filled', class: 'icon') %>
+<!-- Same code, now uses ViewComponent internally! -->
+```
 
 ## Usage
 
@@ -156,14 +186,15 @@ The ViewComponent uses the same optimized caching system as the helper method:
 - **File-based caching**: Persistent cache stored in `tmp/cache/fluent-icons/`
 - **Production compilation**: Use `rake fluent_icons:compile` to reduce icon data from 22MB to <100KB
 
-## Comparison with Helper Method
+## Helper vs Direct Component Rendering
 
-### Helper Method
+### Option 1: Use the Helper (Recommended)
 ```erb
 <%= fluent('add', style: 'filled', weight: 24, class: 'icon') %>
+<!-- Automatically uses ViewComponent if installed -->
 ```
 
-### ViewComponent
+### Option 2: Render Component Directly (Advanced)
 ```erb
 <%= render FluentIcons::Component.new(
   name: 'add',
@@ -171,21 +202,22 @@ The ViewComponent uses the same optimized caching system as the helper method:
   weight: 24,
   class: 'icon'
 ) %>
+<!-- Explicit ViewComponent rendering -->
 ```
 
-**Benefits of ViewComponent:**
-- ✅ More testable (can write component tests)
-- ✅ Better IDE autocomplete
-- ✅ More explicit and readable
-- ✅ Follows ViewComponent patterns in your app
-- ✅ Same caching performance as helper
+**We recommend using the helper (`fluent()`) because:**
+- ✅ Cleaner, shorter syntax
+- ✅ Works with or without ViewComponent
+- ✅ Automatically switches to ViewComponent when available
+- ✅ Zero migration needed for existing code
+- ✅ Same performance as direct component rendering
 
-**When to use the helper:**
-- ✨ Quick inline icons
-- ✨ You don't use ViewComponent in your app
-- ✨ Prefer simpler syntax
+**Direct component rendering is useful when:**
+- 🔧 You want explicit ViewComponent syntax
+- 🔧 Building custom wrapper components
+- 🔧 Need advanced ViewComponent features
 
-Both methods are fully supported and use the same underlying caching system!
+Both methods use the same underlying caching system!
 
 ## Testing
 
