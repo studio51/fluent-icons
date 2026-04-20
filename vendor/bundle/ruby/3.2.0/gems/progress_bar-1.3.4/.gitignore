@@ -1,0 +1,13 @@
+*.gem
+.bundle
+Gemfile.lock
+pkg/*
+
+# Rubocop inherited configs
+.rubocop-http*
+
+# Editor junk
+.DS_Store
+.vscode
+.idea
+
