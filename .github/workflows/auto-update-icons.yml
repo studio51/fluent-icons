@@ -21,7 +21,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version-file: '.ruby-version'
           bundler-cache: true
 
       - name: Install dependencies
@@ -33,9 +33,9 @@ jobs:
           # Clone FluentUI repo to check version
           git clone --depth 1 https://github.com/microsoft/fluentui-system-icons.git temp-fluent
 
-          # Get version from package.json
+          # Get version from packages/react-native-icons/package.json
           cd temp-fluent
-          FLUENT_VERSION=$(node -p "require('./package.json').version")
+          FLUENT_VERSION=$(node -p "require('./packages/react-native-icons/package.json').version")
           echo "version=$FLUENT_VERSION" >> $GITHUB_OUTPUT
           echo "FluentUI version: $FLUENT_VERSION"
 
