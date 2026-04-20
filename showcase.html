@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluent Icons - Icon Showcase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(214.3 31.8% 91.4%)",
+                        input: "hsl(214.3 31.8% 91.4%)",
+                        ring: "hsl(222.2 84% 4.9%)",
+                        background: "hsl(0 0% 100%)",
+                        foreground: "hsl(222.2 84% 4.9%)",
+                        primary: {
+                            DEFAULT: "hsl(222.2 47.4% 11.2%)",
+                            foreground: "hsl(210 40% 98%)",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(210 40% 96.1%)",
+                            foreground: "hsl(222.2 47.4% 11.2%)",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(210 40% 96.1%)",
+                            foreground: "hsl(215.4 16.3% 46.9%)",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(210 40% 96.1%)",
+                            foreground: "hsl(222.2 47.4% 11.2%)",
+                        },
+                        card: {
+                            DEFAULT: "hsl(0 0% 100%)",
+                            foreground: "hsl(222.2 84% 4.9%)",
+                        },
+                    },
+                    borderRadius: {
+                        lg: "0.5rem",
+                        md: "calc(0.5rem - 2px)",
+                        sm: "calc(0.5rem - 4px)",
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .icon-card {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .icon-card:hover {
+            transform: translateY(-2px);
+            transition: all 0.2s ease;
+        }
+        .copied-toast {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 9999px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .badge:hover {
+            opacity: 0.8;
+        }
+        .modal-overlay {
+            backdrop-filter: blur(4px);
+        }
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-content {
+            animation: modalSlideIn 0.2s ease-out;
+        }
+        .tab-active {
+            border-bottom: 2px solid hsl(222.2 47.4% 11.2%);
+        }
+        pre {
+            background: hsl(210 40% 96.1%);
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            overflow-x: auto;
+            font-size: 0.75rem;
+            line-height: 1.4;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body class="bg-background h-screen overflow-hidden">
+    <!-- Header (Fixed) -->
+    <header class="fixed top-0 left-0 right-0 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
+        <div class="px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-foreground">Fluent Icons</h1>
+                    <p class="text-sm text-muted-foreground">Microsoft's Fluent UI System Icons - <span id="total-icons">0</span> icons</p>
+                </div>
+                <div class="flex gap-2">
+                    <a href="https://github.com/microsoft/fluentui-system-icons" target="_blank"
+                       class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                        GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filters (Fixed) -->
+    <div class="fixed top-[88px] left-0 right-0 bg-background border-b border-border z-40">
+        <div class="px-4 py-4">
+            <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
+                <!-- Search -->
+                <div class="flex-1 w-full md:w-auto">
+                    <div class="relative">
+                        <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input
+                            type="text"
+                            id="search-input"
+                            placeholder="Search icons..."
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pl-10 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                    </div>
+                </div>
+
+                <!-- Style Filter -->
+                <div class="flex gap-2 flex-wrap">
+                    <span class="text-sm text-muted-foreground self-center">Style:</span>
+                    <button onclick="filterStyle('all')" data-style="all" class="style-filter badge bg-primary text-primary-foreground">All</button>
+                    <button onclick="filterStyle('regular')" data-style="regular" class="style-filter badge bg-secondary text-secondary-foreground">Regular</button>
+                    <button onclick="filterStyle('filled')" data-style="filled" class="style-filter badge bg-secondary text-secondary-foreground">Filled</button>
+                </div>
+
+                <!-- Size Filter -->
+                <div class="flex gap-2 flex-wrap">
+                    <span class="text-sm text-muted-foreground self-center">Size:</span>
+                    <button onclick="filterSize('all')" data-size="all" class="size-filter badge bg-primary text-primary-foreground">All</button>
+                    <button onclick="filterSize('16')" data-size="16" class="size-filter badge bg-secondary text-secondary-foreground">16</button>
+                    <button onclick="filterSize('20')" data-size="20" class="size-filter badge bg-secondary text-secondary-foreground">20</button>
+                    <button onclick="filterSize('24')" data-size="24" class="size-filter badge bg-secondary text-secondary-foreground">24</button>
+                    <button onclick="filterSize('28')" data-size="28" class="size-filter badge bg-secondary text-secondary-foreground">28</button>
+                    <button onclick="filterSize('32')" data-size="32" class="size-filter badge bg-secondary text-secondary-foreground">32</button>
+                </div>
+            </div>
+
+            <!-- Results count -->
+            <div class="mt-4">
+                <p class="text-sm text-muted-foreground">
+                    Showing <span id="showing-count">0</span> of <span id="filtered-count">0</span> icons
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="fixed top-[228px] left-0 right-0 bottom-0 flex">
+        <!-- Left: Icon Grid (Scrollable) -->
+        <div class="flex-1 overflow-y-auto px-4 py-6">
+            <div id="icon-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4">
+                <!-- Icons will be inserted here -->
+            </div>
+
+            <!-- Load More Button -->
+            <div class="mt-8 text-center pb-8" id="load-more-container" style="display: none;">
+                <button
+                    onclick="loadMore()"
+                    class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-8"
+                >
+                    Load More Icons
+                </button>
+            </div>
+
+            <!-- No Results -->
+            <div id="no-results" class="text-center py-12" style="display: none;">
+                <svg class="mx-auto h-12 w-12 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h3 class="mt-4 text-lg font-semibold text-foreground">No icons found</h3>
+                <p class="mt-2 text-sm text-muted-foreground">Try adjusting your search or filters</p>
+            </div>
+        </div>
+
+        <!-- Right: Preview Panel (Fixed, Full Height) -->
+        <div class="w-80 xl:w-96 border-l border-border bg-card overflow-y-auto">
+            <div class="p-6">
+                <!-- Empty State -->
+                <div id="preview-empty" class="text-center py-12">
+                    <svg class="mx-auto h-12 w-12 text-muted-foreground mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    <p class="text-sm text-muted-foreground">Click an icon to preview</p>
+                </div>
+
+                <!-- Preview Content -->
+                <div id="preview-content" style="display: none;">
+                    <!-- Big Icon Display -->
+                    <div class="flex items-center justify-center p-8 mb-6 border border-border rounded-lg bg-accent/30">
+                        <div id="preview-icon-display" class="w-32 h-32 flex items-center justify-center">
+                            <!-- Icon will be rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Icon Details -->
+                    <div class="mb-6">
+                        <h2 id="preview-icon-name" class="text-2xl font-bold text-foreground mb-1"></h2>
+                        <p id="preview-icon-full-name" class="text-xs text-muted-foreground"></p>
+                    </div>
+
+                    <!-- Style Tabs -->
+                    <div class="mb-4">
+                        <h3 class="text-xs font-semibold text-foreground mb-2 uppercase tracking-wide">Style</h3>
+                        <div id="preview-styles" class="flex gap-2">
+                            <!-- Style tabs will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Size Badges -->
+                    <div class="mb-6">
+                        <h3 class="text-xs font-semibold text-foreground mb-2 uppercase tracking-wide">Size</h3>
+                        <div id="preview-sizes" class="flex flex-wrap gap-2">
+                            <!-- Size badges will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Code Snippets -->
+                    <div>
+                        <h3 class="text-xs font-semibold text-foreground mb-2 uppercase tracking-wide">Code</h3>
+
+                        <!-- Tabs -->
+                        <div class="flex gap-1 border-b border-border mb-3 overflow-x-auto">
+                            <button onclick="switchTab('rails')" data-tab="rails" class="code-tab px-3 py-1.5 text-xs font-medium text-foreground transition-colors tab-active whitespace-nowrap">
+                                Rails
+                            </button>
+                            <button onclick="switchTab('react')" data-tab="react" class="code-tab px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
+                                React
+                            </button>
+                            <button onclick="switchTab('html')" data-tab="html" class="code-tab px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
+                                HTML
+                            </button>
+                            <button onclick="switchTab('ruby')" data-tab="ruby" class="code-tab px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
+                                Ruby
+                            </button>
+                            <button onclick="switchTab('svg')" data-tab="svg" class="code-tab px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
+                                SVG
+                            </button>
+                        </div>
+
+                        <!-- Code Content -->
+                        <div id="code-content" class="relative">
+                            <button onclick="copyCodeSnippet()" class="absolute top-2 right-2 bg-primary text-primary-foreground px-2 py-1 rounded text-xs font-medium hover:bg-primary/90 transition-colors z-10">
+                                Copy
+                            </button>
+                            <pre class="!pr-16 !text-xs !max-h-96 overflow-y-auto"><code id="code-snippet"></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copy Toast -->
+    <div id="copy-toast" class="fixed bottom-4 right-4 bg-primary text-primary-foreground px-6 py-3 rounded-md shadow-lg z-[100]" style="display: none;">
+        <div class="flex items-center gap-2">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span id="toast-message">Copied to clipboard!</span>
+        </div>
+    </div>
+
+    <script>
+        let allIcons = [];
+        let filteredIcons = [];
+        let currentStyle = 'all';
+        let currentSize = 'all';
+        let currentSearch = '';
+        let displayedCount = 0;
+        const ICONS_PER_PAGE = 120;
+
+        // Load icons data
+        async function loadIconsData() {
+            try {
+                // Try different paths for the data file
+                let response;
+                const paths = [
+                    'lib/build/data.json',
+                    './lib/build/data.json',
+                    '../lib/build/data.json'
+                ];
+
+                for (const path of paths) {
+                    try {
+                        response = await fetch(path);
+                        if (response.ok) break;
+                    } catch (e) {
+                        continue;
+                    }
+                }
+
+                if (!response || !response.ok) {
+                    throw new Error('Could not load data.json');
+                }
+
+                const data = await response.json();
+
+                // Transform data into flat array
+                allIcons = Object.entries(data).map(([key, value]) => ({
+                    name: key,
+                    fullName: value.name,
+                    styles: value.styles || [],
+                    weights: value.weights || [],
+                    icons: value.icons || {}
+                }));
+
+                document.getElementById('total-icons').textContent = allIcons.length.toLocaleString();
+                filterIcons();
+            } catch (error) {
+                console.error('Error loading icons:', error);
+                document.getElementById('icon-grid').innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-red-500">Error loading icons. Please make sure data.json is accessible.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Filter icons based on current filters
+        function filterIcons() {
+            filteredIcons = allIcons.filter(icon => {
+                // Search filter
+                if (currentSearch && !icon.name.toLowerCase().includes(currentSearch.toLowerCase())) {
+                    return false;
+                }
+
+                // Style filter
+                if (currentStyle !== 'all' && !icon.styles.includes(currentStyle)) {
+                    return false;
+                }
+
+                // Size filter
+                if (currentSize !== 'all' && !icon.weights.includes(currentSize)) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            document.getElementById('filtered-count').textContent = filteredIcons.length.toLocaleString();
+            displayedCount = 0;
+            document.getElementById('icon-grid').innerHTML = '';
+            loadMore();
+        }
+
+        // Load more icons
+        function loadMore() {
+            const start = displayedCount;
+            const end = Math.min(start + ICONS_PER_PAGE, filteredIcons.length);
+            const iconsToDisplay = filteredIcons.slice(start, end);
+
+            const grid = document.getElementById('icon-grid');
+
+            iconsToDisplay.forEach(icon => {
+                const card = createIconCard(icon);
+                grid.appendChild(card);
+            });
+
+            displayedCount = end;
+            document.getElementById('showing-count').textContent = displayedCount.toLocaleString();
+
+            // Show/hide load more button
+            const loadMoreBtn = document.getElementById('load-more-container');
+            if (displayedCount < filteredIcons.length) {
+                loadMoreBtn.style.display = 'block';
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
+
+            // Show/hide no results
+            const noResults = document.getElementById('no-results');
+            if (filteredIcons.length === 0) {
+                noResults.style.display = 'block';
+                grid.style.display = 'none';
+            } else {
+                noResults.style.display = 'none';
+                grid.style.display = 'grid';
+            }
+        }
+
+        // Create icon card
+        function createIconCard(icon) {
+            const div = document.createElement('div');
+            div.className = 'icon-card group relative flex flex-col items-center justify-center p-4 border border-border rounded-lg hover:border-primary hover:shadow-md cursor-pointer bg-card transition-all';
+            div.dataset.iconName = icon.name;
+
+            // Get first available style and weight
+            const style = icon.styles[0] || 'regular';
+            const weight = icon.weights[0] || '20';
+            const pathData = icon.icons[style]?.[weight] || '';
+
+            div.innerHTML = `
+                <div class="w-12 h-12 flex items-center justify-center mb-2">
+                    <svg width="32" height="32" viewBox="0 0 ${weight} ${weight}" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-foreground">
+                        ${pathData}
+                    </svg>
+                </div>
+                <div class="text-xs text-center text-muted-foreground group-hover:text-foreground transition-colors font-medium truncate w-full px-1">
+                    ${icon.name}
+                </div>
+                <div class="text-[10px] text-muted-foreground mt-1">
+                    ${icon.styles.join(', ')} · ${icon.weights.join(', ')}
+                </div>
+            `;
+
+            div.onclick = () => {
+                // Remove active state from all cards
+                document.querySelectorAll('.icon-card').forEach(card => {
+                    card.classList.remove('border-primary', 'bg-accent');
+                });
+                // Add active state to clicked card
+                div.classList.add('border-primary', 'bg-accent');
+
+                showIconDetails(icon);
+            };
+
+            return div;
+        }
+
+        // Copy icon code to clipboard
+        function copyIconCode(name, style, weight) {
+            const code = `fluent('${name}', style: '${style}', weight: ${weight})`;
+            navigator.clipboard.writeText(code).then(() => {
+                showToast(`Copied: ${name}`);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('copy-toast');
+            const messageEl = document.getElementById('toast-message');
+            messageEl.textContent = message;
+            toast.style.display = 'block';
+            toast.classList.add('copied-toast');
+
+            setTimeout(() => {
+                toast.style.display = 'none';
+                toast.classList.remove('copied-toast');
+            }, 2000);
+        }
+
+        // Filter by style
+        function filterStyle(style) {
+            currentStyle = style;
+            updateFilterButtons('style', style);
+            filterIcons();
+        }
+
+        // Filter by size
+        function filterSize(size) {
+            currentSize = size;
+            updateFilterButtons('size', size);
+            filterIcons();
+        }
+
+        // Update filter button states
+        function updateFilterButtons(type, value) {
+            const buttons = document.querySelectorAll(`.${type}-filter`);
+            buttons.forEach(btn => {
+                if (btn.dataset[type] === value) {
+                    btn.className = `${type}-filter badge bg-primary text-primary-foreground`;
+                } else {
+                    btn.className = `${type}-filter badge bg-secondary text-secondary-foreground`;
+                }
+            });
+        }
+
+        // Search input handler
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            filterIcons();
+        });
+
+        // Modal functions
+        let currentIcon = null;
+        let currentTab = 'rails';
+        let selectedStyle = 'regular';
+        let selectedWeight = '20';
+
+        function showIconDetails(icon) {
+            currentIcon = icon;
+
+            // Get first available style and weight (remove duplicates)
+            const uniqueStyles = [...new Set(icon.styles)];
+            const uniqueWeights = [...new Set(icon.weights)];
+            selectedStyle = uniqueStyles[0] || 'regular';
+            selectedWeight = uniqueWeights[0] || '20';
+            currentTab = 'rails';
+
+            // Hide empty state, show content
+            document.getElementById('preview-empty').style.display = 'none';
+            document.getElementById('preview-content').style.display = 'block';
+
+            // Set icon name
+            document.getElementById('preview-icon-name').textContent = icon.name;
+            document.getElementById('preview-icon-full-name').textContent = icon.fullName;
+
+            // Render variations and big icon
+            renderVariations(icon);
+
+            // Update code snippet
+            updateCodeSnippet();
+        }
+
+        function renderVariations(icon) {
+            renderStyleTabs(icon);
+            renderSizeBadges(icon);
+            updateIconDisplay();
+        }
+
+        function renderStyleTabs(icon) {
+            const container = document.getElementById('preview-styles');
+            container.innerHTML = '';
+
+            // Get unique styles
+            const uniqueStyles = [...new Set(icon.styles)];
+
+            uniqueStyles.forEach(style => {
+                const isSelected = style === selectedStyle;
+
+                const tab = document.createElement('button');
+                tab.className = `px-3 py-1.5 text-xs font-medium rounded-md transition-all capitalize ${
+                    isSelected
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-secondary text-secondary-foreground hover:bg-accent'
+                }`;
+                tab.onclick = () => selectStyle(style);
+                tab.textContent = style;
+
+                container.appendChild(tab);
+            });
+        }
+
+        function renderSizeBadges(icon) {
+            const container = document.getElementById('preview-sizes');
+            container.innerHTML = '';
+
+            // Get available sizes for the selected style
+            const availableSizes = new Set();
+            const uniqueWeights = [...new Set(icon.weights)];
+
+            uniqueWeights.forEach(weight => {
+                const pathData = icon.icons[selectedStyle]?.[weight];
+                if (pathData) {
+                    availableSizes.add(weight);
+                }
+            });
+
+            // Sort sizes numerically
+            const sortedSizes = Array.from(availableSizes).sort((a, b) => parseInt(a) - parseInt(b));
+
+            if (sortedSizes.length === 0) {
+                container.innerHTML = '<p class="text-xs text-muted-foreground">No sizes available for this style</p>';
+                return;
+            }
+
+            sortedSizes.forEach(weight => {
+                const isSelected = weight === selectedWeight;
+
+                const badge = document.createElement('button');
+                badge.className = `px-2 py-1 text-xs font-medium rounded-md transition-all ${
+                    isSelected
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-secondary text-secondary-foreground hover:bg-accent'
+                }`;
+                badge.onclick = () => selectSize(weight);
+                badge.textContent = `${weight}px`;
+
+                container.appendChild(badge);
+            });
+        }
+
+        function updateIconDisplay() {
+            if (!currentIcon) return;
+
+            const container = document.getElementById('preview-icon-display');
+            const pathData = currentIcon.icons[selectedStyle]?.[selectedWeight] || '';
+
+            if (!pathData) {
+                container.innerHTML = `
+                    <div class="text-center text-muted-foreground text-xs">
+                        <p>No icon available for</p>
+                        <p>${selectedStyle} ${selectedWeight}px</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <svg width="128" height="128" viewBox="0 0 ${selectedWeight} ${selectedWeight}" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-foreground w-full h-full">
+                    ${pathData}
+                </svg>
+            `;
+        }
+
+        function selectStyle(style) {
+            selectedStyle = style;
+
+            // Check if current size is available in new style, if not select first available
+            const availableSizes = new Set();
+            const uniqueWeights = [...new Set(currentIcon.weights)];
+
+            uniqueWeights.forEach(weight => {
+                const pathData = currentIcon.icons[style]?.[weight];
+                if (pathData) {
+                    availableSizes.add(weight);
+                }
+            });
+
+            if (!availableSizes.has(selectedWeight)) {
+                const sortedSizes = Array.from(availableSizes).sort((a, b) => parseInt(a) - parseInt(b));
+                selectedWeight = sortedSizes[0] || '20';
+            }
+
+            renderVariations(currentIcon);
+            updateCodeSnippet();
+        }
+
+        function selectSize(weight) {
+            selectedWeight = weight;
+            renderSizeBadges(currentIcon);
+            updateIconDisplay();
+            updateCodeSnippet();
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // Update tab buttons
+            document.querySelectorAll('.code-tab').forEach(btn => {
+                if (btn.dataset.tab === tab) {
+                    btn.className = 'code-tab px-3 py-1.5 text-xs font-medium text-foreground transition-colors tab-active whitespace-nowrap';
+                } else {
+                    btn.className = 'code-tab px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap';
+                }
+            });
+
+            updateCodeSnippet();
+        }
+
+        function updateCodeSnippet() {
+            if (!currentIcon) return;
+
+            const snippetEl = document.getElementById('code-snippet');
+            const pathData = currentIcon.icons[selectedStyle]?.[selectedWeight] || '';
+
+            let code = '';
+
+            switch (currentTab) {
+                case 'rails':
+                    code = `<%= fluent('${currentIcon.name}', style: '${selectedStyle}', weight: ${selectedWeight}) %>`;
+                    break;
+
+                case 'react':
+                    code = `import FluentIcon from '@/components/FluentIcon';
+
+<FluentIcon
+  name="${currentIcon.name}"
+  style="${selectedStyle}"
+  size={${selectedWeight}}
+  className="text-current"
+/>
+
+// Or with inline SVG:
+export const ${toPascalCase(currentIcon.name)}Icon = () => (
+  <svg
+    width="${selectedWeight}"
+    height="${selectedWeight}"
+    viewBox="0 0 ${selectedWeight} ${selectedWeight}"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    ${pathData}
+  </svg>
+);`;
+                    break;
+
+                case 'html':
+                    code = `<svg
+  width="${selectedWeight}"
+  height="${selectedWeight}"
+  viewBox="0 0 ${selectedWeight} ${selectedWeight}"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  class="fluent fluent-${currentIcon.name}"
+>
+  ${pathData}
+</svg>`;
+                    break;
+
+                case 'ruby':
+                    code = `# In your Ruby code:
+icon = FluentIcons::Fluent.new('${currentIcon.name}',
+  style: '${selectedStyle}',
+  weight: ${selectedWeight}
+)
+svg_html = icon.to_svg
+
+# With custom classes:
+icon = FluentIcons::Fluent.new('${currentIcon.name}',
+  style: '${selectedStyle}',
+  weight: ${selectedWeight},
+  class: 'w-6 h-6 text-blue-500'
+)`;
+                    break;
+
+                case 'svg':
+                    code = `<!-- Full SVG -->
+<svg
+  width="${selectedWeight}"
+  height="${selectedWeight}"
+  viewBox="0 0 ${selectedWeight} ${selectedWeight}"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  ${pathData}
+</svg>
+
+<!-- Path data only -->
+${pathData}`;
+                    break;
+            }
+
+            snippetEl.textContent = code;
+        }
+
+        function copyCodeSnippet() {
+            const code = document.getElementById('code-snippet').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showToast('Code copied to clipboard!');
+            });
+        }
+
+        function toPascalCase(str) {
+            return str.split('_').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join('');
+        }
+
+        // Initialize
+        loadIconsData();
+    </script>
+</body>
+</html>
