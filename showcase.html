@@ -116,6 +116,11 @@
         svg path, svg circle, svg rect, svg polygon, svg polyline, svg line {
             fill: currentColor;
         }
+        /* Dark mode header - solid background */
+        .dark header {
+            background-color: hsl(224 71% 4%) !important;
+            backdrop-filter: none;
+        }
     </style>
     <style>
         @keyframes fadeIn {
@@ -439,6 +444,10 @@
                 }));
 
                 document.getElementById('total-icons').textContent = allIcons.length.toLocaleString();
+
+                // Validate icons and report issues
+                validateIcons();
+
                 filterIcons();
             } catch (error) {
                 console.error('Error loading icons:', error);
@@ -448,6 +457,66 @@
                     </div>
                 `;
             }
+        }
+
+        // Validate all icons and report issues
+        function validateIcons() {
+            console.log('%c🔍 Validating Icons...', 'font-size: 14px; font-weight: bold; color: #4F46E5');
+
+            const issues = [];
+            const supportedStyles = ['regular', 'filled'];
+            const commonSizes = ['16', '20', '24', '28', '32'];
+
+            allIcons.forEach(icon => {
+                const iconIssues = {
+                    name: icon.name,
+                    problems: []
+                };
+
+                // Check each supported style
+                supportedStyles.forEach(style => {
+                    if (!icon.styles.includes(style)) {
+                        return; // Skip if icon doesn't have this style
+                    }
+
+                    // Check common sizes for this style
+                    commonSizes.forEach(size => {
+                        if (icon.weights.includes(size)) {
+                            const pathData = icon.icons[style]?.[size];
+
+                            // Check if path data exists and is valid
+                            if (!pathData || !pathData.trim()) {
+                                iconIssues.problems.push(`Missing/empty data for ${style} ${size}px`);
+                            } else if (pathData.length < 10) {
+                                iconIssues.problems.push(`Suspicious data for ${style} ${size}px (too short: ${pathData.length} chars)`);
+                            }
+                        }
+                    });
+                });
+
+                if (iconIssues.problems.length > 0) {
+                    issues.push(iconIssues);
+                }
+            });
+
+            if (issues.length > 0) {
+                console.log(`%c⚠️ Found ${issues.length} icons with potential issues:`, 'font-size: 12px; color: #F59E0B');
+                console.table(issues.slice(0, 50)); // Show first 50 in table format
+
+                if (issues.length > 50) {
+                    console.log(`... and ${issues.length - 50} more. Full list:`, issues);
+                }
+
+                // Log specific broken icons for quick reference
+                console.log('%c📋 Icons with issues:', 'font-weight: bold');
+                issues.forEach(issue => {
+                    console.log(`  • ${issue.name}: ${issue.problems.join(', ')}`);
+                });
+            } else {
+                console.log('%c✅ All icons validated successfully!', 'font-size: 12px; color: #10B981; font-weight: bold');
+            }
+
+            return issues;
         }
 
         // Filter icons based on current filters
@@ -705,13 +774,73 @@
                 style = icon.styles[0] || 'regular';
             }
 
-            const weight = icon.weights[0] || '20';
-            const pathData = icon.icons[style]?.[weight] || '';
+            // Prioritize common sizes in order: 24, 20, 28, 32, 16
+            // (24 before 20 because some icons have simplified 20px versions)
+            const preferredSizes = ['24', '20', '28', '32', '16'];
+            let weight = '20';
+            let pathData = '';
+
+            // Helper function to check if path data looks valid (not just a simple circle/dot)
+            function isValidIconPath(data) {
+                if (!data || !data.trim()) return false;
+                // Too short = probably just a simple shape
+                if (data.length < 50) return false;
+                // Just a circle pattern (single M command with C commands for a circle)
+                if (data.match(/^M\d+\.?\d*\s+\d+\.?\d*C[\d\s\.C]+Z?$/)) return false;
+                return true;
+            }
+
+            // First, try preferred sizes in order, but skip overly simple ones
+            for (const preferredSize of preferredSizes) {
+                if (icon.weights.includes(preferredSize)) {
+                    const data = icon.icons[style]?.[preferredSize];
+                    if (isValidIconPath(data)) {
+                        weight = preferredSize;
+                        pathData = data;
+                        break;
+                    }
+                }
+            }
+
+            // If no good path found in preferred sizes, try any available weight
+            if (!pathData) {
+                for (const w of icon.weights) {
+                    const data = icon.icons[style]?.[w];
+                    if (data && data.trim()) {
+                        weight = w;
+                        pathData = data;
+                        break;
+                    }
+                }
+            }
+
+            // Clean up path data - remove gradient references and use currentColor instead
+            let cleanedPathData = pathData;
+            if (cleanedPathData) {
+                // Check if this has gradient fills (for debugging)
+                const hasGradient = cleanedPathData.includes('url(#');
+
+                // Replace gradient fills with currentColor
+                cleanedPathData = cleanedPathData.replace(/fill="url\([^)]+\)"/g, 'fill="currentColor"');
+                // Also handle stroke gradients
+                cleanedPathData = cleanedPathData.replace(/stroke="url\([^)]+\)"/g, 'stroke="currentColor"');
+
+                // Debug: log if we found and replaced gradients
+                if (hasGradient && icon.name === 'alert_badge') {
+                    console.log('alert_badge original:', pathData);
+                    console.log('alert_badge cleaned:', cleanedPathData);
+                }
+            }
+
+            // Check if this icon might have rendering issues
+            const hasIssue = !pathData || pathData.length < 10;
+            const issueIndicator = hasIssue ? '<span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" title="Potential rendering issue"></span>' : '';
 
             div.innerHTML = `
+                ${issueIndicator}
                 <div class="w-10 h-10 flex items-center justify-center mb-2">
                     <svg width="28" height="28" viewBox="0 0 ${weight} ${weight}" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-foreground">
-                        ${pathData}
+                        ${cleanedPathData}
                     </svg>
                 </div>
                 <div class="text-xs text-center text-muted-foreground group-hover:text-foreground transition-colors font-medium truncate w-full">
@@ -798,8 +927,10 @@
         function showIconDetails(icon) {
             currentIcon = icon;
 
-            // Get first available style and weight (remove duplicates)
-            const uniqueStyles = [...new Set(icon.styles)];
+            // Get first available style and weight (remove duplicates), prioritize regular/filled only
+            const allStyles = [...new Set(icon.styles)];
+            const supportedStyles = ['regular', 'filled'];
+            const uniqueStyles = allStyles.filter(style => supportedStyles.includes(style));
             const uniqueWeights = [...new Set(icon.weights)];
             selectedStyle = uniqueStyles[0] || 'regular';
             selectedWeight = uniqueWeights[0] || '20';
@@ -830,8 +961,10 @@
             const container = document.getElementById('preview-styles');
             container.innerHTML = '';
 
-            // Get unique styles
-            const uniqueStyles = [...new Set(icon.styles)];
+            // Get unique styles, filter to only show working styles (regular and filled)
+            const allStyles = [...new Set(icon.styles)];
+            const supportedStyles = ['regular', 'filled'];
+            const uniqueStyles = allStyles.filter(style => supportedStyles.includes(style));
 
             uniqueStyles.forEach(style => {
                 const isSelected = style === selectedStyle;
