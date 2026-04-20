@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Automatic daily updates via GitHub Actions**: Icons are now automatically updated
+  - Daily check for new FluentUI System Icons releases
+  - Automatic version bumping based on FluentUI version
+  - Automatic gem build and publish to RubyGems
+  - Automatic GitHub release creation with changelog
+  - Full documentation in .github/AUTOMATION.md
+  - Manual trigger option available
 - **Opt-in ViewComponent integration**: The `fluent()` helper can optionally use ViewComponent when enabled
   - Configuration-based opt-in via `FluentIcons.configure`
   - Generate configuration file with `rails generate fluent_icons:install`

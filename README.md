@@ -29,9 +29,19 @@ This gem now includes advanced caching and compilation features to optimize perf
 - **Production compilation**: Scan your app and compile a minimal icon set (can reduce from 22MB to <100KB!)
 - **Reduced gem size**: SVG files are excluded from distribution (~13MB → ~1-2MB gem size)
 
+## Automatic Updates
+
+This gem is **automatically updated daily** via GitHub Actions! When Microsoft releases new icons to the FluentUI System Icons repository:
+
+- ✅ Icons are automatically downloaded and processed
+- ✅ Gem version is updated to match FluentUI version
+- ✅ New version is published to RubyGems automatically
+- ✅ GitHub release is created with changelog
+
+See [Automation Documentation](./.github/AUTOMATION.md) for details.
+
 ## Considerations
 
-- Currently, the gem has to be updated manually each time the fluent repository gets updated. Expect weekly updates.
 - SVG source files are kept in the repository but excluded from the distributed gem
 
 ## Installation
@@ -201,21 +211,39 @@ rake fluent_icons:clear_cache
 
 ## ToDo
 
-- [x] Add a ViewComponent option (updated: ViewComponent support added)
+- [x] Add a ViewComponent option (updated: ViewComponent support added with opt-in configuration)
 - [ ] Add CSS fonts
 - [x] Get rid of Nokogiri
 - [x] Find a better way to store the icons. (updated: They are now stored in a JSON file)
 - [x] Add caching system (updated: File-based + in-memory caching implemented)
 - [x] Optimize gem size (updated: SVG files excluded from distribution)
 - [x] Production compilation support (updated: Scan and compile minimal icon sets)
-- [ ] Use Github Actions to update the build folder and generate the required schema automatically on new releases
+- [x] Use Github Actions to update the build folder and generate the required schema automatically on new releases (updated: Daily automated updates with auto-publish to RubyGems)
 - [x] <s>Add a way to search them on Github Pages</s> (updated: https://fluenticons.co/ is pretty good)
 - [ ] Render raw SVG, instead of images, when previewing so we can dynamically set color and size, if needed
 - [ ] Include TailwindCSS extension to allow for dynamic color and size when rendering the icon
 
-## Update
+## Manual Update (Maintainers)
 
-To update the icons, run `bin/update`. This will copy all the icons from the FluentUI Icon library to the `lib/data/svg` directory and create the new `data.json` with the updated schema.
+Icons are automatically updated daily via GitHub Actions (see [Automation Documentation](./.github/AUTOMATION.md)).
+
+For manual updates, run:
+
+```bash
+bin/update
+```
+
+This will:
+1. Clone the FluentUI Icon library
+2. Copy icons to `lib/build/svg/`
+3. Generate the new `data.json` with updated schema
+4. Clean up temporary files
+
+After manual update, remember to:
+1. Update version in `lib/fluent-icons/version.rb`
+2. Commit changes
+3. Create git tag
+4. Build and publish gem
 
 ---
 

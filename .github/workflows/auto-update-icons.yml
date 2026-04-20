@@ -1,0 +1,200 @@
+name: Auto Update Icons
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-icons:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for proper versioning
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Get FluentUI version
+        id: fluent-version
+        run: |
+          # Clone FluentUI repo to check version
+          git clone --depth 1 https://github.com/microsoft/fluentui-system-icons.git temp-fluent
+
+          # Get version from package.json
+          cd temp-fluent
+          FLUENT_VERSION=$(node -p "require('./package.json').version")
+          echo "version=$FLUENT_VERSION" >> $GITHUB_OUTPUT
+          echo "FluentUI version: $FLUENT_VERSION"
+
+          cd ..
+          rm -rf temp-fluent
+
+      - name: Check current version
+        id: current-version
+        run: |
+          CURRENT_VERSION=$(ruby -e "require './lib/fluent-icons/version'; puts FluentIcons::FLUENT_UI_ICONS_VERSION")
+          echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT_VERSION"
+
+      - name: Compare versions
+        id: check-update
+        run: |
+          FLUENT_VERSION="${{ steps.fluent-version.outputs.version }}"
+          CURRENT_VERSION="${{ steps.current-version.outputs.version }}"
+
+          if [ "$FLUENT_VERSION" != "$CURRENT_VERSION" ]; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "New version available: $FLUENT_VERSION (current: $CURRENT_VERSION)"
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            echo "Already up to date with version $CURRENT_VERSION"
+          fi
+
+      - name: Run update script
+        if: steps.check-update.outputs.needs_update == 'true'
+        run: |
+          bundle exec ruby bin/update
+
+      - name: Update version file
+        if: steps.check-update.outputs.needs_update == 'true'
+        run: |
+          FLUENT_VERSION="${{ steps.fluent-version.outputs.version }}"
+
+          # Extract major.minor.patch from FluentUI version (e.g., 1.1.324)
+          IFS='.' read -ra VERSION_PARTS <<< "$FLUENT_VERSION"
+          MAJOR="${VERSION_PARTS[0]}"
+          MINOR="${VERSION_PARTS[1]}"
+          PATCH="${VERSION_PARTS[2]}"
+
+          # Create new gem version (2.0.0.PATCH)
+          NEW_GEM_VERSION="2.0.0.${PATCH}"
+
+          # Update version.rb
+          cat > lib/fluent-icons/version.rb << EOF
+          module FluentIcons
+            FLUENT_UI_ICONS_VERSION = '${FLUENT_VERSION}'.freeze
+            VERSION = '${NEW_GEM_VERSION}'.freeze
+          end
+          EOF
+
+          echo "Updated to version $NEW_GEM_VERSION (FluentUI: $FLUENT_VERSION)"
+          echo "NEW_GEM_VERSION=$NEW_GEM_VERSION" >> $GITHUB_ENV
+
+      - name: Count new icons
+        if: steps.check-update.outputs.needs_update == 'true'
+        id: count-icons
+        run: |
+          ICON_COUNT=$(ruby -r json -e "puts JSON.parse(File.read('lib/build/data.json')).keys.size")
+          echo "count=$ICON_COUNT" >> $GITHUB_OUTPUT
+          echo "Total icons: $ICON_COUNT"
+
+      - name: Configure Git
+        if: steps.check-update.outputs.needs_update == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit changes
+        if: steps.check-update.outputs.needs_update == 'true'
+        run: |
+          git add .
+          git commit -m "chore: update to FluentUI Icons v${{ steps.fluent-version.outputs.version }}
+
+          - Updated to FluentUI System Icons v${{ steps.fluent-version.outputs.version }}
+          - Total icons: ${{ steps.count-icons.outputs.count }}
+          - Gem version: ${{ env.NEW_GEM_VERSION }}
+
+          🤖 Automated update via GitHub Actions"
+
+      - name: Create Git tag
+        if: steps.check-update.outputs.needs_update == 'true'
+        run: |
+          git tag -a "v${{ env.NEW_GEM_VERSION }}" -m "Release v${{ env.NEW_GEM_VERSION }}
+
+          FluentUI System Icons v${{ steps.fluent-version.outputs.version }}
+          Total icons: ${{ steps.count-icons.outputs.count }}"
+
+      - name: Push changes and tags
+        if: steps.check-update.outputs.needs_update == 'true'
+        run: |
+          git push origin main
+          git push origin "v${{ env.NEW_GEM_VERSION }}"
+
+      - name: Build gem
+        if: steps.check-update.outputs.needs_update == 'true'
+        run: |
+          gem build fluent-icons.gemspec
+
+      - name: Publish to RubyGems
+        if: steps.check-update.outputs.needs_update == 'true'
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        run: |
+          mkdir -p ~/.gem
+          cat > ~/.gem/credentials << EOF
+          ---
+          :rubygems_api_key: ${GEM_HOST_API_KEY}
+          EOF
+          chmod 0600 ~/.gem/credentials
+
+          gem push fluent-icons-${{ env.NEW_GEM_VERSION }}.gem
+
+      - name: Create GitHub Release
+        if: steps.check-update.outputs.needs_update == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.NEW_GEM_VERSION }}
+          name: v${{ env.NEW_GEM_VERSION }}
+          body: |
+            ## 🎉 New Icon Release
+
+            Updated to **FluentUI System Icons v${{ steps.fluent-version.outputs.version }}**
+
+            ### 📊 Stats
+            - **Total Icons**: ${{ steps.count-icons.outputs.count }}
+            - **Gem Version**: ${{ env.NEW_GEM_VERSION }}
+            - **FluentUI Version**: ${{ steps.fluent-version.outputs.version }}
+
+            ### 📦 Installation
+
+            ```ruby
+            gem 'fluent-icons', '~> ${{ env.NEW_GEM_VERSION }}'
+            ```
+
+            Or update your existing installation:
+
+            ```bash
+            bundle update fluent-icons
+            ```
+
+            ### 🔗 Links
+            - [RubyGems](https://rubygems.org/gems/fluent-icons/${{ env.NEW_GEM_VERSION }})
+            - [Icon Showcase](https://github.com/${{ github.repository }}/blob/main/showcase.html)
+            - [Microsoft FluentUI System Icons](https://github.com/microsoft/fluentui-system-icons)
+
+            ---
+
+            🤖 This release was automatically generated
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify if no update needed
+        if: steps.check-update.outputs.needs_update == 'false'
+        run: |
+          echo "✅ Already up to date with FluentUI Icons v${{ steps.current-version.outputs.version }}"
+          echo "No update needed."
