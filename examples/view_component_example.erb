@@ -1,0 +1,92 @@
+<%# examples/view_component_example.erb %>
+<%# ViewComponent examples for FluentIcons %>
+
+<%# Basic icon %>
+<%= render FluentIcons::Component.new(name: "add") %>
+
+<%# Icon with custom style %>
+<%= render FluentIcons::Component.new(name: "heart", style: "filled") %>
+
+<%# Icon with custom size/weight %>
+<%= render FluentIcons::Component.new(name: "search", weight: 24) %>
+
+<%# Icon with Tailwind classes %>
+<%= render FluentIcons::Component.new(
+  name: "delete",
+  style: "filled",
+  weight: 20,
+  class: "w-5 h-5 text-red-500 hover:text-red-700"
+) %>
+
+<%# Button with icon %>
+<button class="btn btn-primary">
+  <%= render FluentIcons::Component.new(name: "add", class: "w-4 h-4 mr-2") %>
+  Add Item
+</button>
+
+<%# Icon with ARIA label for accessibility %>
+<%= render FluentIcons::Component.new(
+  name: "close",
+  aria: { label: "Close dialog" }
+) %>
+
+<%# Icon with Hotwire/Turbo data attributes %>
+<%= render FluentIcons::Component.new(
+  name: "refresh",
+  data: {
+    action: "click->refresh#reload",
+    turbo_frame: "content"
+  }
+) %>
+
+<%# Icon with ID %>
+<%= render FluentIcons::Component.new(
+  name: "settings",
+  id: "settings-icon",
+  class: "w-6 h-6 text-gray-600"
+) %>
+
+<%# Navigation menu with icons %>
+<nav class="flex gap-4">
+  <a href="/home" class="flex items-center gap-2">
+    <%= render FluentIcons::Component.new(name: "home", class: "w-5 h-5") %>
+    Home
+  </a>
+  <a href="/search" class="flex items-center gap-2">
+    <%= render FluentIcons::Component.new(name: "search", class: "w-5 h-5") %>
+    Search
+  </a>
+  <a href="/profile" class="flex items-center gap-2">
+    <%= render FluentIcons::Component.new(name: "person", class: "w-5 h-5") %>
+    Profile
+  </a>
+</nav>
+
+<%# Alert with icon %>
+<div class="alert alert-warning">
+  <%= render FluentIcons::Component.new(
+    name: "warning",
+    style: "filled",
+    class: "w-5 h-5 text-yellow-600 inline-block mr-2"
+  ) %>
+  Please review your settings
+</div>
+
+<%# Loading spinner %>
+<div class="flex items-center gap-2">
+  <%= render FluentIcons::Component.new(
+    name: "arrow_sync",
+    class: "w-5 h-5 animate-spin text-blue-500"
+  ) %>
+  Loading...
+</div>
+
+<%# Icon grid (showcase multiple icons) %>
+<div class="grid grid-cols-6 gap-4">
+  <% %w[add delete edit search settings home].each do |icon_name| %>
+    <div class="flex flex-col items-center p-4 border rounded hover:bg-gray-50">
+      <%= render FluentIcons::Component.new(name: icon_name, class: "w-8 h-8 mb-2") %>
+      <span class="text-xs"><%= icon_name %></span>
+    </div>
+  <% end %>
+</div>

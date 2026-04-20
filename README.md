@@ -52,8 +52,51 @@ Or install it yourself as:
 
 ## Usage
 
-Plain Ruby `FluentIcons::Fluent.new('add', style: 'regular', weight: 20, **options)`
-Rails `fluent('add', style: 'regular', weight: 20, **options)`
+### Plain Ruby
+```ruby
+FluentIcons::Fluent.new('add', style: 'regular', weight: 20, **options)
+```
+
+### Rails Helper
+```erb
+<%= fluent('add', style: 'regular', weight: 20, **options) %>
+```
+
+### ViewComponent (Optional)
+
+If you have [ViewComponent](https://viewcomponent.org/) installed, you can use the component syntax:
+
+```erb
+<!-- Basic usage -->
+<%= render FluentIcons::Component.new(name: "add") %>
+
+<!-- With options -->
+<%= render FluentIcons::Component.new(
+  name: "delete",
+  style: "filled",
+  weight: 24,
+  class: "w-6 h-6 text-red-500"
+) %>
+
+<!-- With Hotwire/Turbo -->
+<%= render FluentIcons::Component.new(
+  name: "refresh",
+  data: { action: "click->refresh#icon" }
+) %>
+```
+
+**Installation:**
+```ruby
+# Gemfile
+gem 'view_component'
+gem 'fluent-icons'
+```
+
+The ViewComponent will automatically use the same caching system as the helper.
+
+👉 **[Full ViewComponent Documentation](./VIEW_COMPONENT.md)**
+
+### Styling
 
 By default, the helper will use `weight: 20` of the SVG icon. However, not all of them have a weight of 20.
 If the SVG image is not found, you should try a different weight like so: `fluent('add', weight: 24)`
@@ -134,7 +177,7 @@ rake fluent_icons:clear_cache
 
 ## ToDo
 
-- [ ] Add a ViewComponent option
+- [x] Add a ViewComponent option (updated: ViewComponent support added)
 - [ ] Add CSS fonts
 - [x] Get rid of Nokogiri
 - [x] Find a better way to store the icons. (updated: They are now stored in a JSON file)

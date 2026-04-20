@@ -7,6 +7,11 @@ require 'fluent-icons/cache'
 if defined?(Rails)
   require 'fluent-icons/helper'
   require 'fluent-icons/railtie'
+
+  # Load ViewComponent integration if ViewComponent is available
+  if defined?(ViewComponent::Base)
+    require 'fluent-icons/component'
+  end
 end
 
 module FluentIcons

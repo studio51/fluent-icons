@@ -30,4 +30,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'git', '~> 1.18'
   spec.add_development_dependency 'progress_bar', '~> 1.3'
+
+  # Optional: Add view_component for ViewComponent support
+  # spec.add_dependency 'view_component', '>= 2.0'
 end
